@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Coexist",
-  description: "Coexist login or register landing page",
+  title: "Coexist - Login",
+  description: "Coexist login page",
 }
 
 export default function RootLayout({ children }) {

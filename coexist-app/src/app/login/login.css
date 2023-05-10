@@ -1,0 +1,43 @@
+.iconGroup{
+    display:flex;
+    align-items:center;
+    margin:10px;
+}
+.iconGroup svg{
+    font-size:2rem;
+    padding-right:5px;
+}
+.stretchInput{
+    width:20rem;
+}
+.submitButton{
+    margin-top:15px!important;
+    font-size:1rem!important;
+    min-width:7.5rem!important;
+    letter-spacing:0.1rem!important;
+}
+.fieldError{
+    border-radius:10px;
+    color:rgb(251, 145, 145);
+    background-color:rgb(93, 13, 13);
+    padding:10px;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    margin:15px;
+    animation:0.125s alert;
+}
+.fieldError span{
+    vertical-align:middle;
+}
+.fieldError svg{
+    vertical-align:middle;
+    padding-right:1px;
+    color:rgb(223, 7, 7);
+}
+.alertHidden{
+    display:none;
+}
+
+@keyframes alert{
+    0% {font-size:0rem}
+    100% {font-size:1rem}
+}
