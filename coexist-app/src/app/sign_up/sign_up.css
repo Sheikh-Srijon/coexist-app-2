@@ -10,12 +10,6 @@
 .stretchInput{
     width:20rem;
 }
-.submitButton{
-    margin-top:15px!important;
-    font-size:1rem!important;
-    min-width:7.5rem!important;
-    letter-spacing:0.1rem!important;
-}
 .fieldError{
     border-radius:10px;
     color:rgb(251, 145, 145);
