@@ -23,9 +23,11 @@ export default function Login() {
                 <Lock/>
                 <TextField required id="password" name="password" label="Password" type="password" className="stretchInput"/>
             </Box>
-            <Button variant="contained" type="submit" endIcon={<Send/>} className="submitButton">
-                Login
-            </Button>
+            <Box display="flex" justifyContent="center">
+              <Button variant="contained" type="submit" endIcon={<Send/>} size="large">
+                  Login
+              </Button>
+            </Box>
         </Stack>
       </Box>
     </ThemeProvider>
