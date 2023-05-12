@@ -1,75 +1,184 @@
 "use client"
 
-import { Button, ThemeProvider, CssBaseline, Box, TextField, Grid } from "@mui/material"
+import { useState, useContext } from "react"
+import { Button, Box, TextField, Grid } from "@mui/material"
 import { Send, Email, Lock, LockOutlined, Phone, Person, PersonOutlined, Error } from "@mui/icons-material"
-import { darkTheme } from "../../theme/themes"
 import "./sign_up.css"
+import { useRouter } from "next/navigation"
+import { AuthContext } from "../layout"
 
 export default function SignUp() {
+    const router = useRouter()
+    const auth = useContext(AuthContext)
+
+    const [form, setForm] = useState({
+      first: "",
+      last: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+    })
+  
+    function handleSubmit(e){
+      const first = form.first.replace(/\s+/g, "")
+      const last = form.last.replace(/\s+/g, "")
+      const email = form.email.replace(/\s+/g, "")
+      const phone = form.phone.replace(/\s+/g, "")
+      const password = form.password.replace(/\s+/g, "")
+      const confirmPassword = form.confirmPassword.replace(/\s+/g, "")
+  
+      if(first.length === 0 || last.length === 0 || email.length === 0 || phone.length === 0 || password.length < 8 || confirmPassword.length < 8 || password !== confirmPassword){
+        const errorMsg = document.querySelector("#signupErrorAlert")
+        errorMsg.classList.remove("alertHidden")
+      }
+      else{
+        auth.logIn(email, password)
+      }
+  
+      e.preventDefault()
+    }
+
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline/>
-        <Box height="90vh" display="flex" justifyContent="center" alignItems="center" component="form" autoComplete="off" noValidate id="signupForm">
-        <Grid container spacing={0.5} justifyContent="center" alignItems="center"> 
-            <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
-                <Grid item xs={8} display="flex" justifyContent="center">
-                    <Box className="fieldError alertHidden" id="signupErrorAlert">
-                        <Error/>
-                        <span>One or more errors occurred</span>
-                    </Box>
-                </Grid>
-            </Grid>
-            <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
-                <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "end"}}>
-                    <Box className="iconGroup">
-                        <Person/>
-                        <TextField required id="first" label="First Name" type="text" className="stretchInput"/>
-                    </Box>
-                </Grid>
-                <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "start"}}>
-                    <Box className="iconGroup">
-                        <PersonOutlined/>
-                        <TextField required id="last" label="Last Name" type="text" className="stretchInput"/>
-                    </Box>
-                </Grid>
-            </Grid>
-            <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
-                <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "end"}}>
-                    <Box className="iconGroup">
-                        <Email/>
-                        <TextField required id="email" name="email" label="Email" type="email" className="stretchInput"/>
-                    </Box>
-                </Grid>
-                <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "start"}}>
-                    <Box className="iconGroup">
-                        <Phone/>
-                        <TextField required id="phone" label="Phone Number" type="text" className="stretchInput"/>
-                    </Box>
-                </Grid>
-            </Grid>
-            <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
-                <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "end"}}>
-                    <Box className="iconGroup">
-                        <Lock/>
-                        <TextField required id="password" label="Password" type="password" className="stretchInput"/>
-                    </Box>
-                </Grid>
-                <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "start"}}>
-                    <Box className="iconGroup">
-                        <LockOutlined/>
-                        <TextField required id="confirmPassword" label="Confirm Password" type="password" className="stretchInput"/>
-                    </Box>
-                </Grid>
-            </Grid>
-            <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
-                <Grid item xs={8} display="flex" justifyContent="center">
-                    <Button variant="contained" type="submit" endIcon={<Send/>} size="large">
-                        Sign Up
-                    </Button>
-                </Grid>
+    auth.auth !== null ? router.push("/home") : 
+    <Box minHeight="90vh" display="flex" justifyContent="center" alignItems="center" component="form" autoComplete="off" noValidate id="signupForm" onSubmit={e => handleSubmit(e)}>
+    <Grid container spacing={0.5} justifyContent="center" alignItems="center"> 
+        <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
+            <Grid item xs={8} display="flex" justifyContent="center">
+                <Box className="fieldError alertHidden" id="signupErrorAlert">
+                    <Error/>
+                    <span>One or more errors occurred</span>
+                </Box>
             </Grid>
         </Grid>
-        </Box>
-    </ThemeProvider>
+        <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
+            <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "end"}}>
+                <Box className="iconGroup">
+                    <Person/>
+                    <TextField 
+                        required 
+                        id="first" 
+                        name="first" 
+                        label="First Name" 
+                        type="text" 
+                        className="stretchInput"
+                        onChange={e => 
+                            setForm({
+                                ...form,
+                                first: e.target.value,
+                            })
+                        }
+                    />
+                </Box>
+            </Grid>
+            <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "start"}}>
+                <Box className="iconGroup">
+                    <PersonOutlined/>
+                    <TextField 
+                        required 
+                        id="last" 
+                        name="last" 
+                        label="Last Name" 
+                        type="text" 
+                        className="stretchInput"
+                        onChange={e => 
+                            setForm({
+                                ...form,
+                                last: e.target.value,
+                            })
+                        }
+                    />
+                </Box>
+            </Grid>
+        </Grid>
+        <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
+            <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "end"}}>
+                <Box className="iconGroup">
+                    <Email/>
+                    <TextField 
+                        required 
+                        id="email" 
+                        name="email" 
+                        label="Email" 
+                        type="email" 
+                        className="stretchInput"
+                        onChange={e => 
+                            setForm({
+                                ...form,
+                                email: e.target.value,
+                            })
+                        }
+                    />
+                </Box>
+            </Grid>
+            <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "start"}}>
+                <Box className="iconGroup">
+                    <Phone/>
+                    <TextField 
+                        required 
+                        id="phone" 
+                        name="phone" 
+                        label="Phone Number" 
+                        type="tel" 
+                        className="stretchInput"
+                        onChange={e => 
+                            setForm({
+                                ...form,
+                                phone: e.target.value,
+                            })
+                        }
+                    />
+                </Box>
+            </Grid>
+        </Grid>
+        <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
+            <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "end"}}>
+                <Box className="iconGroup">
+                    <Lock/>
+                    <TextField 
+                        required 
+                        id="password" 
+                        name="password" 
+                        label="Password" 
+                        type="password" 
+                        className="stretchInput"
+                        onChange={e => 
+                            setForm({
+                                ...form,
+                                password: e.target.value,
+                            })
+                        }
+                    />
+                </Box>
+            </Grid>
+            <Grid item sm={12} md={6} display="flex" justifyContent={{sm: "center", md: "start"}}>
+                <Box className="iconGroup">
+                    <LockOutlined/>
+                    <TextField 
+                        required 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        label="Confirm Password" 
+                        type="password" 
+                        className="stretchInput"
+                        onChange={e => 
+                            setForm({
+                                ...form,
+                                confirmPassword: e.target.value,
+                            })
+                        }
+                    />
+                </Box>
+            </Grid>
+        </Grid>
+        <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
+            <Grid item xs={8} display="flex" justifyContent="center">
+                <Button variant="contained" type="submit" endIcon={<Send/>} size="large">
+                    Sign Up
+                </Button>
+            </Grid>
+        </Grid>
+    </Grid>
+    </Box>
   )
 }

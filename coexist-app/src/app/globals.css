@@ -2,5 +2,10 @@ a{
     text-decoration: none;
 }
 button{
-    width:8.5rem;
+    min-width:9rem!important;
+}
+.focusLogo{
+    height:auto;
+    width:90%;
+    max-width:400px;
 }

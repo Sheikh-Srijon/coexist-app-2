@@ -1,35 +1,84 @@
 "use client"
 
-import { Button, ThemeProvider, CssBaseline, Box, Stack, TextField } from "@mui/material"
+import { useState, useContext } from "react"
+import { Button, Box, Stack, TextField } from "@mui/material"
 import { Send, Email, Lock, Error } from "@mui/icons-material"
-import { darkTheme } from "../../theme/themes"
 import "./login.css"
+import { useRouter } from "next/navigation"
+import { AuthContext } from "../layout"
 
 export default function Login() {
+  const router = useRouter()
+  const auth = useContext(AuthContext)
+
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  })
+
+  function handleSubmit(e){
+    const email = form.email.replace(/\s+/g, "")
+    const password = form.password.replace(/\s+/g, "")
+
+    if(email.length === 0 || password.length === 0){
+      const errorMsg = document.querySelector("#loginErrorAlert")
+      errorMsg.classList.remove("alertHidden")
+    }
+    else{
+      auth.logIn(email, password)
+    }
+
+    e.preventDefault()
+  }
+
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline/>
-      <Box height="90vh" display="flex" justifyContent="center" alignItems="center" component="form" autoComplete="off" noValidate id="loginForm">
-        <Stack spacing={2}>
-            <Box className="fieldError alertHidden" id="loginErrorAlert">
-                <Error/>
-                <span>Incorrect username and/or password</span>
-            </Box>
-            <Box className="iconGroup">
-                <Email/>
-                <TextField required id="email" name="email" label="Email" type="email" className="stretchInput"/>
-            </Box>
-            <Box className="iconGroup">
-                <Lock/>
-                <TextField required id="password" name="password" label="Password" type="password" className="stretchInput"/>
-            </Box>
-            <Box display="flex" justifyContent="center">
-              <Button variant="contained" type="submit" endIcon={<Send/>} size="large">
-                  Login
-              </Button>
-            </Box>
-        </Stack>
-      </Box>
-    </ThemeProvider>
+    auth.auth !== null ? router.push("/home") : 
+    <Box minHeight="90vh" display="flex" justifyContent="center" alignItems="center" component="form" autoComplete="off" noValidate id="loginForm" onSubmit={e => handleSubmit(e)}>
+      <Stack spacing={2}>
+        <Box className="fieldError alertHidden" id="loginErrorAlert">
+          <Error/>
+          <span>Incorrect username and/or password</span>
+        </Box>
+        <Box className="iconGroup">
+          <Email/>
+          <TextField 
+            required 
+            id="email" 
+            name="email" 
+            label="Email" 
+            type="email" 
+            className="stretchInput"
+            onChange={e => 
+              setForm({
+                ...form,
+                email: e.target.value,
+              })
+            }
+          />
+        </Box>
+        <Box className="iconGroup">
+          <Lock/>
+          <TextField 
+            required 
+            id="password" 
+            name="password" 
+            label="Password" 
+            type="password" 
+            className="stretchInput"
+            onChange={e => 
+              setForm({
+                ...form,
+                password: e.target.value,
+              })
+            }
+          />
+        </Box>
+        <Box display="flex" justifyContent="center">
+          <Button variant="contained" type="submit" endIcon={<Send/>} size="large">
+            Login
+          </Button>
+        </Box>
+      </Stack>
+    </Box>
   )
 }
