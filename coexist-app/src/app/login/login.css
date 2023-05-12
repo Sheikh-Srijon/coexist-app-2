@@ -12,9 +12,8 @@
 }
 .fieldError{
     border-radius:10px;
-    color:rgb(251, 205, 205);
-    background-color:rgb(93, 13, 13);
     padding:10px;
+    padding-left:14px;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     margin:15px;
     animation:0.125s alert;
@@ -24,8 +23,7 @@
 }
 .fieldError svg{
     vertical-align:middle;
-    padding-right:1px;
-    color:rgb(223, 7, 7);
+    padding-right:4px;
 }
 .alertHidden{
     display:none;
