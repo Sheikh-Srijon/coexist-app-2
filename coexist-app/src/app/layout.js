@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 
 let theme = "lightTheme"
 
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+if (typeof window !== "undefined" && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
   theme = "darkTheme"
 }
 
