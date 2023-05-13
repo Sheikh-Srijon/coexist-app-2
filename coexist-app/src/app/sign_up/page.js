@@ -45,7 +45,7 @@ export default function SignUp() {
     <Grid container spacing={0.5} justifyContent="center" alignItems="center"> 
         <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
             <Grid item xs={8} display="flex" justifyContent="center">
-                <Box className="fieldError alertHidden" id="signupErrorAlert">
+                <Box className="fieldError alertHidden" id="signupErrorAlert" sx={{color: "error.contrastText", bgcolor: "error.main"}}>
                     <Error/>
                     <span>One or more errors occurred</span>
                 </Box>
