@@ -8,7 +8,7 @@ import "./home.css"
 import { useRouter } from "next/navigation"
 import { AuthContext, ThemeContext } from "../layout"
 
-export default function SignUp() {
+export default function Home() {
     const router = useRouter()
     const auth = useContext(AuthContext)
     const currentTheme = useContext(ThemeContext)
