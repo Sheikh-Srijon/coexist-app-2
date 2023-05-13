@@ -3,7 +3,7 @@ export const metadata = {
     description: "The Coexist home page for authenticated users",
   }
   
-  export default function SignUpLayout({ children }) {
+  export default function HomeLayout({ children }) {
     return (
       children
     )
