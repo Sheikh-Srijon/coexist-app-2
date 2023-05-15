@@ -1,18 +1,12 @@
 "use client"
 
-import { createContext, useState, useCallback } from "react"
+import { createContext, useState, useCallback, useEffect } from "react"
 import { ThemeProvider, CssBaseline } from "@mui/material"
 import { darkTheme, lightTheme } from "@/theme/themes"
 import "./globals.css"
 import { useRouter } from "next/navigation"
 
-let theme = "lightTheme"
-
-if (typeof window !== "undefined" && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-  theme = "darkTheme"
-}
-
-export const ThemeContext = createContext(theme)
+export const ThemeContext = createContext(null)
 
 export const AuthContext = createContext(null)
 
@@ -61,9 +55,26 @@ function useAuth(){
   return {auth, logIn, logOut}
 }
 
+function useTheme(){
+  const [theme, setTheme] = useState("lightTheme")
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme("darkTheme")
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+      const colorScheme = event.matches ? "darkTheme" : "lightTheme"
+      setTheme(colorScheme)
+    })
+  }, [])
+
+  return theme
+}
+
 export default function RootLayout({ children }) {
   const currentAuth = useAuth()
-  const currentTheme = theme
+  const currentTheme = useTheme()
 
   return (
     <html lang="en">
