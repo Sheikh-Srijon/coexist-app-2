@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { Button, Grid, Paper, Stack, Box, Typography, Backdrop, List, ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar, TextField } from "@mui/material"
 import { Logout, Chat, Settings, AccountBox, Delete, Add, Search } from "@mui/icons-material"
 import Image from "next/image"
@@ -27,8 +27,13 @@ export default function Home() {
         // TODO: delete all user information for this account
     }
 
+    useEffect(() => {
+        if(auth.auth === null){
+            router.push("/")
+        }
+    }, [])
+
     return (
-        auth.auth === null ? router.push("/") :
         <Grid container spacing={2} my="25px">
             <Grid container item justifyContent="center" alignItems="center">
                 <Grid item xs={12} md={6} lg={4} display="flex" justifyContent="center">
