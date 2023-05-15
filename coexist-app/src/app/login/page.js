@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { Button, Box, Stack, TextField } from "@mui/material"
 import { Send, Email, Lock, Error } from "@mui/icons-material"
 import "./login.css"
@@ -31,8 +31,13 @@ export default function Login() {
     e.preventDefault()
   }
 
+  useEffect(() => {
+    if(auth.auth !== null){
+      router.push("/home")
+    }
+  }, [])
+
   return (
-    auth.auth !== null ? router.push("/home") : 
     <Box minHeight="90vh" display="flex" justifyContent="center" alignItems="center" component="form" autoComplete="off" noValidate id="loginForm" onSubmit={e => handleSubmit(e)}>
       <Stack spacing={2}>
         <Box className="fieldError alertHidden" id="loginErrorAlert" sx={{color: "error.contrastText", bgcolor: "error.main"}}>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { Button, Box, TextField, Grid } from "@mui/material"
 import { Send, Email, Lock, LockOutlined, Phone, Person, PersonOutlined, Error } from "@mui/icons-material"
 import "./sign_up.css"
@@ -39,8 +39,13 @@ export default function SignUp() {
       e.preventDefault()
     }
 
+    useEffect(() => {
+        if(auth.auth !== null){
+            router.push("/home")
+        }
+    }, [])
+
   return (
-    auth.auth !== null ? router.push("/home") : 
     <Box minHeight="90vh" display="flex" justifyContent="center" alignItems="center" component="form" autoComplete="off" noValidate id="signupForm" onSubmit={e => handleSubmit(e)}>
     <Grid container spacing={0.5} justifyContent="center" alignItems="center"> 
         <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
