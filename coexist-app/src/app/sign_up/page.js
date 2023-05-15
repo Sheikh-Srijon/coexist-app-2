@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useContext, useEffect } from "react"
-import { Button, Box, TextField, Grid } from "@mui/material"
+import { Button, Box, TextField, Grid, CircularProgress } from "@mui/material"
 import { Send, Email, Lock, LockOutlined, Phone, Person, PersonOutlined, Error } from "@mui/icons-material"
 import "./sign_up.css"
 import { useRouter } from "next/navigation"
@@ -46,6 +46,11 @@ export default function SignUp() {
     }, [])
 
   return (
+    auth.auth !== null ? 
+    <Box height="100vh" width="100vw" display="flex" justifyContent="center" alignItems="center">
+        <CircularProgress color="success"/>
+    </Box> 
+    :
     <Box minHeight="90vh" display="flex" justifyContent="center" alignItems="center" component="form" autoComplete="off" noValidate id="signupForm" onSubmit={e => handleSubmit(e)}>
     <Grid container spacing={0.5} justifyContent="center" alignItems="center"> 
         <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
