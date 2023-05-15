@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useContext, useEffect } from "react"
-import { Button, Box, Stack, TextField } from "@mui/material"
+import { Button, Box, Stack, TextField, CircularProgress } from "@mui/material"
 import { Send, Email, Lock, Error } from "@mui/icons-material"
 import "./login.css"
 import { useRouter } from "next/navigation"
@@ -38,6 +38,11 @@ export default function Login() {
   }, [])
 
   return (
+    auth.auth !== null ?
+    <Box height="100vh" width="100vw" display="flex" justifyContent="center" alignItems="center">
+        <CircularProgress color="success"/>
+    </Box> 
+    :
     <Box minHeight="90vh" display="flex" justifyContent="center" alignItems="center" component="form" autoComplete="off" noValidate id="loginForm" onSubmit={e => handleSubmit(e)}>
       <Stack spacing={2}>
         <Box className="fieldError alertHidden" id="loginErrorAlert" sx={{color: "error.contrastText", bgcolor: "error.main"}}>
