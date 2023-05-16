@@ -57,7 +57,7 @@ export default function Home() {
                                 <Box display="flex" alignItems="center">
                                     <Search sx={{mr:1, my:0.5}}/>
                                     <TextField
-                                        type="text" 
+                                        type="text"    
                                         id="search" 
                                         name="search" 
                                         label="Search contacts..." 
