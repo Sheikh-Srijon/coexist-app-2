@@ -27,7 +27,7 @@ export async function POST(request) {
             password: user.password
         }
 
-        return NextResponse.json(data).status(201)
+        return NextResponse.status(201).json(data)
     }
     else{
         return NextResponse.status(409)

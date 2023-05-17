@@ -31,6 +31,15 @@ export default function Home() {
         })
     }
 
+    function handleLogout(){
+        try{
+            auth.logOut(auth.auth.email, auth.auth.password)
+        }
+        catch(err){
+            alert("An error has occurred. You have NOT been completely logged out!")
+        }
+    }
+
     useEffect(() => {
         if(auth.auth === null){
             router.push("/")
@@ -145,16 +154,16 @@ export default function Home() {
                             </Box>
                             <Box>
                                 <Typography className="paperBody">
-                                    First name: PLACEHOLDER
+                                    First name: {auth.auth.firstName}
                                 </Typography>
                                 <Typography className="paperBody">
-                                    Last name: PLACEHOLDER
+                                    Last name: {auth.auth.lastName}
                                 </Typography>
                                 <Typography className="paperBody">
-                                    Email: PLACEHOLDER
+                                    Email: {auth.auth.email}
                                 </Typography>
                                 <Typography className="paperBody">
-                                    Phone: PLACEHOLDER
+                                    Phone: {auth.auth.phone}
                                 </Typography>
                             </Box>
                         </Stack>
@@ -202,7 +211,7 @@ export default function Home() {
             </Grid>
             <Grid container item justifyContent="center" alignItems="center">
                 <Grid item xs={12} md={6} lg={4} display="flex" justifyContent="center">
-                    <Button variant="contained" size="large" startIcon={<Logout/>} onClick={() => auth.logOut()}>Log Out</Button>
+                    <Button variant="contained" size="large" startIcon={<Logout/>} onClick={() => handleLogout()}>Log Out</Button>
                 </Grid>
             </Grid>
         </Grid>

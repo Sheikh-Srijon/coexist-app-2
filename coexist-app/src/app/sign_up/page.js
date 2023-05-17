@@ -2,7 +2,7 @@
 
 import { useState, useContext, useEffect } from "react"
 import { Button, Box, TextField, Grid, CircularProgress } from "@mui/material"
-import { Send, Email, Lock, LockOutlined, Phone, Person, PersonOutlined, Error, EventAvailableSharp } from "@mui/icons-material"
+import { Send, Email, Lock, LockOutlined, Phone, Person, PersonOutlined, Error } from "@mui/icons-material"
 import "./sign_up.css"
 import { useRouter } from "next/navigation"
 import { AuthContext } from "../layout"

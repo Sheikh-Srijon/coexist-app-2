@@ -19,7 +19,7 @@ export async function POST(request) {
     }
 
     if(result !== false && result !== null){
-        return NextResponse.json(result).status(200)
+        return NextResponse.status(200).json(result)
     }
     else{
         return NextResponse.status(404)

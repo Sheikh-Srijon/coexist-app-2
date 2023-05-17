@@ -44,8 +44,6 @@ function useAuth(){
       setAuth(res.data)
       setAuthState(res.data)
       router.push("/home")
-    }).catch(err => {
-      console.log(`The following error occurred: ${err}`)
     })
   }, [setAuthState])
 
@@ -56,8 +54,6 @@ function useAuth(){
       setAuth(null)
       setAuthState(null)
       router.push("/")
-    }).catch(err => {
-      console.log(`The following error occurred: ${err}`)
     })
   },[setAuthState])
 

@@ -22,7 +22,7 @@ export async function POST(request) {
     }
 
     if(result !== false && result.deletedCount > 0){
-        return NextResponse.json(data).status(204)
+        return NextResponse.status(204).json(data)
     }
     else{
         return NextResponse.status(409)
