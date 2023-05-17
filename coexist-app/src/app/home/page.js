@@ -7,6 +7,7 @@ import Image from "next/image"
 import "./home.css"
 import { useRouter } from "next/navigation"
 import { AuthContext, ThemeContext } from "../layout"
+import axios from "axios"
 
 export default function Home() {
     const router = useRouter()
@@ -23,8 +24,11 @@ export default function Home() {
     }
 
     function handleDelete(){
-        auth.logOut()
-        // TODO: delete all user information for this account
+        axios.post("/api/account/close", auth.auth).then(res => {
+            auth.logOut(auth.auth.email, auth.auth.password)
+        }).catch(err => {
+            alert("An error has occurred. Your account has NOT been deleted!")
+        })
     }
 
     useEffect(() => {
@@ -57,7 +61,7 @@ export default function Home() {
                                 <Box display="flex" alignItems="center">
                                     <Search sx={{mr:1, my:0.5}}/>
                                     <TextField
-                                        type="text"    
+                                        type="text" 
                                         id="search" 
                                         name="search" 
                                         label="Search contacts..." 

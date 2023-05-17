@@ -5,6 +5,7 @@ import { ThemeProvider, CssBaseline } from "@mui/material"
 import { darkTheme, lightTheme } from "@/theme/themes"
 import "./globals.css"
 import { useRouter } from "next/navigation"
+import axios from "axios"
 
 export const ThemeContext = createContext(null)
 
@@ -37,19 +38,27 @@ function useAuth(){
   const router = useRouter()
 
   const logIn = useCallback(async (email, password) => {
-    const myNewAuth = {email: email, password: password} // await TODO: SOME FUNCTION TO LOG THE USER IN
+    const credentials = {email: email, password: password}
 
-    setAuth(myNewAuth)
-    setAuthState(myNewAuth)
-    router.push("/home")
+    axios.post("/api/account/login", credentials).then(res => {
+      setAuth(res.data)
+      setAuthState(res.data)
+      router.push("/home")
+    }).catch(err => {
+      console.log(`The following error occurred: ${err}`)
+    })
   }, [setAuthState])
 
-  const logOut = useCallback(async () => {
-    // await TODO: SOME FUNCTION TO LOG THE USER OUT
+  const logOut = useCallback(async (email, password) => {
+    const credentials = {email: email, password: password}
 
-    setAuth(null)
-    setAuthState(null)
-    router.push("/")
+    axios.post("/api/account/logout", credentials).then(res => {
+      setAuth(null)
+      setAuthState(null)
+      router.push("/")
+    }).catch(err => {
+      console.log(`The following error occurred: ${err}`)
+    })
   },[setAuthState])
 
   return {auth, logIn, logOut}

@@ -20,12 +20,17 @@ export default function Login() {
     const email = form.email.replace(/\s+/g, "")
     const password = form.password.replace(/\s+/g, "")
 
+    const errorMsg = document.querySelector("#loginErrorAlert")
+
     if(email.length === 0 || password.length === 0){
-      const errorMsg = document.querySelector("#loginErrorAlert")
       errorMsg.classList.remove("alertHidden")
     }
     else{
       auth.logIn(email, password)
+
+      if(auth.auth === null){
+        errorMsg.classList.remove("alertHidden")
+      }
     }
 
     e.preventDefault()
