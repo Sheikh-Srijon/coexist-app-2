@@ -9,3 +9,7 @@ button{
     width:90%;
     max-width:400px;
 }
+.returnButton{
+    min-width:0;
+    margin:1%!important;
+}
