@@ -89,7 +89,7 @@ export default function Home() {
             }
 
             return (
-            <Link href="/chat" key={chat._id}>
+            <Link href={`/chat/${chat.name}`} key={chat._id}>
                 <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemAvatar>
