@@ -6,12 +6,13 @@ export async function POST(request) {
     const db = dbClient.db("coexist_data")
     const users = db.collection("users")
 
+    const body = await request.json()
     const user = {
-        firstName: request.body.firstName,
-        lastName: request.body.lastName,
-        email: request.body.email,
-        password: request.body.password,
-        phone: request.body.phone
+        firstName: body.firstName,
+        lastName: body.lastName,
+        email: body.email,
+        password: body.password,
+        phone: body.phone
     }
 
     let result;
@@ -22,9 +23,9 @@ export async function POST(request) {
     }
 
     if(result !== false && result.deletedCount > 0){
-        return NextResponse.status(204).json(data)
+        return new NextResponse({init: {status: 204}})
     }
     else{
-        return NextResponse.status(409)
+        return new NextResponse({init: {status: 409}})
     }
 }

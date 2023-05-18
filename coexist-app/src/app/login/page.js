@@ -26,12 +26,7 @@ export default function Login() {
       errorMsg.classList.remove("alertHidden")
     }
     else{
-      try{
-        auth.logIn(email, password)
-      }
-      catch(err){
-        errorMsg.classList.remove("alertHidden")
-      }
+      auth.logIn(email, password)
     }
 
     e.preventDefault()

@@ -38,6 +38,7 @@ export default function SignUp() {
         axios.post("/api/account/register", form).then(res => {
             auth.logIn(email, password)
         }).catch(err => {
+            console.log(`The follow error has occurred and as a result you are NOT registered: ${err}`)
             errorMsg.classList.remove("alertHidden")
         })
       }

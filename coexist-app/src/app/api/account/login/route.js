@@ -6,9 +6,10 @@ export async function POST(request) {
     const db = dbClient.db("coexist_data")
     const users = db.collection("users")
 
+    const body = await request.json()
     const user = {
-        email: request.body.email,
-        password: request.body.password
+        email: body.email,
+        password: body.password
     }
 
     let result;
@@ -19,9 +20,16 @@ export async function POST(request) {
     }
 
     if(result !== false && result !== null){
-        return NextResponse.status(200).json(result)
+        return new NextResponse(
+            JSON.stringify(result), {
+                status: 200,
+                headers: {
+                    "content-type": "application/json"
+                }
+            }
+        )
     }
     else{
-        return NextResponse.status(404)
+        return new NextResponse({init: {status: 404}})
     }
 }

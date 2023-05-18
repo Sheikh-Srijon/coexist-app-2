@@ -10,10 +10,34 @@ import { AuthContext, ThemeContext } from "../layout"
 import axios from "axios"
 
 export default function Home() {
+    const dummyData = [
+        {
+            name: "Mom",
+            _id: 1
+        },
+        {
+            name: "Brother",
+            _id: 2
+        },
+        {
+            name: "Michael Scott",
+            _id: 3
+        },
+        {
+            name: "Pam Beesly",
+            _id: 4
+        },
+        {
+            name: "Jim Halpert",
+            _id: 5
+        }
+    ]
+    
     const router = useRouter()
     const auth = useContext(AuthContext)
     const currentTheme = useContext(ThemeContext)
     const [confirmDelete, setConfirmDelete] = useState(false)
+    const [search, setSearch] = useState("")
 
     const closeConfirmDelete = () => {
         setConfirmDelete(false)
@@ -23,21 +47,70 @@ export default function Home() {
         setConfirmDelete(true)
     }
 
+    function displayChats(data){
+        let chatList
+        let wantedChats = data
+
+        if(search.length > 0){
+            wantedChats = wantedChats.filter(chat => {
+                return chat.name.toLowerCase().includes(search.toLowerCase())
+            })
+        }
+        
+        chatList = wantedChats.map(chat => {
+            const words = chat.name.split(" ")
+            let initials = words[0][0]
+
+            if(words.length > 1){
+                initials = words[0][0] + words[1][0]
+            }
+
+            return (
+            <ListItem disablePadding key={chat._id}>
+                <ListItemButton>
+                    <ListItemAvatar>
+                        <Avatar>
+                            {initials}
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={chat.name}/>
+                </ListItemButton>
+            </ListItem>
+            )
+        })
+
+        if(search.length === 0){
+            chatList.push(
+                <ListItem disablePadding key={0}>
+                    <ListItemButton>
+                        <ListItemAvatar>
+                            <Avatar>
+                                <Add/>
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary="Add New"/>
+                    </ListItemButton>
+                </ListItem>
+            )
+        }
+
+        return (
+            <List>
+                {chatList}
+            </List>
+        )
+    }
+
     function handleDelete(){
         axios.post("/api/account/close", auth.auth).then(res => {
             auth.logOut(auth.auth.email, auth.auth.password)
         }).catch(err => {
-            alert("An error has occurred. Your account has NOT been deleted!")
+            console.log(`The follow error has occurred and as a result your account is NOT deleted: ${err}`)
         })
     }
 
     function handleLogout(){
-        try{
-            auth.logOut(auth.auth.email, auth.auth.password)
-        }
-        catch(err){
-            alert("An error has occurred. You have NOT been completely logged out!")
-        }
+        auth.logOut(auth.auth.email, auth.auth.password)
     }
 
     useEffect(() => {
@@ -75,70 +148,12 @@ export default function Home() {
                                         name="search" 
                                         label="Search contacts..." 
                                         sx={{width:1}} 
+                                        onChange={e => 
+                                            setSearch(e.target.value)
+                                        }
                                     />
                                 </Box>
-                                <List>
-                                    <ListItem disablePadding>
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar sx={{bgcolor: "blue"}}>
-                                                    M
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText primary="Mom"/>
-                                        </ListItemButton>
-                                    </ListItem>
-                                    <ListItem disablePadding>
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar sx={{bgcolor: "red"}}>
-                                                    B
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText primary="Brother"/>
-                                        </ListItemButton>
-                                    </ListItem>
-                                    <ListItem disablePadding>
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar sx={{bgcolor: "green"}}>
-                                                    PB
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText primary="Pam Beesly"/>
-                                        </ListItemButton>
-                                    </ListItem>
-                                    <ListItem disablePadding>
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar sx={{bgcolor: "yellow"}}>
-                                                    JH
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText primary="Jim Halpert"/>
-                                        </ListItemButton>
-                                    </ListItem>
-                                    <ListItem disablePadding>
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar sx={{bgcolor: "orange"}}>
-                                                    MS
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText primary="Michael Scott"/>
-                                        </ListItemButton>
-                                    </ListItem>
-                                    <ListItem disablePadding>
-                                        <ListItemButton>
-                                            <ListItemAvatar>
-                                                <Avatar>
-                                                    <Add/>
-                                                </Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText primary="Add New"/>
-                                        </ListItemButton>
-                                    </ListItem>
-                                </List>
+                                {displayChats(dummyData)}
                             </Box>
                         </Stack>
                     </Paper>

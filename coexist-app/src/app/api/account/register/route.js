@@ -23,14 +23,16 @@ export async function POST(request) {
     }
 
     if(result !== false){
-        const data = {
-            email: user.email,
-            password: user.password
-        }
-
-        NextResponse.json({message:data}, {status: 201})
+        return new NextResponse(
+            JSON.stringify(user), {
+                status: 201,
+                headers: {
+                    "content-type": "application/json"
+                }
+            }
+        )
     }
     else{
-        NextResponse.json({}, {status: 409})
+        return new NextResponse({init: {status: 409}})
     }
 }
