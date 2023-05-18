@@ -102,7 +102,7 @@ export default function Home() {
     }
 
     function handleDelete(){
-        axios.post("/api/account/close", auth.auth, {validateStatus: status => status < 399}).then(res => {
+        axios.post("/api/account/close", auth.auth).then(res => {
             auth.logOut(auth.auth.email, auth.auth.password)
         }).catch(err => {
             console.log(`The follow error has occurred and as a result your account is NOT deleted: ${err}`)

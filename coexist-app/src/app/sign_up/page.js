@@ -36,7 +36,7 @@ export default function SignUp() {
         errorMsg.classList.remove("alertHidden")
       }
       else{
-        axios.post("/api/account/register", form, {validateStatus: status => status < 399}).then(res => {
+        axios.post("/api/account/register", form).then(res => {
             auth.logIn(email, password)
         }).catch(err => {
             console.log(`The follow error has occurred and as a result you are NOT registered: ${err}`)
