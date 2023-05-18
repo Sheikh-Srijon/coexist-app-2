@@ -6,38 +6,42 @@ import { Logout, Chat, Settings, AccountBox, Delete, Add, Search } from "@mui/ic
 import Image from "next/image"
 import "./home.css"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { AuthContext, ThemeContext } from "../layout"
 import axios from "axios"
 
+let dummyData = [
+    {
+        name: "Mom",
+        _id: 1
+    },
+    {
+        name: "Brother",
+        _id: 2
+    },
+    {
+        name: "Michael Scott",
+        _id: 3
+    },
+    {
+        name: "Pam Beesly",
+        _id: 4
+    },
+    {
+        name: "Jim Halpert",
+        _id: 5
+    }
+]
+let id = 6
+
 export default function Home() {
-    const dummyData = [
-        {
-            name: "Mom",
-            _id: 1
-        },
-        {
-            name: "Brother",
-            _id: 2
-        },
-        {
-            name: "Michael Scott",
-            _id: 3
-        },
-        {
-            name: "Pam Beesly",
-            _id: 4
-        },
-        {
-            name: "Jim Halpert",
-            _id: 5
-        }
-    ]
-    
     const router = useRouter()
     const auth = useContext(AuthContext)
     const currentTheme = useContext(ThemeContext)
     const [confirmDelete, setConfirmDelete] = useState(false)
+    const [addNew, setAddNew] = useState(false)
     const [search, setSearch] = useState("")
+    const [form, setForm] = useState("")
 
     const closeConfirmDelete = () => {
         setConfirmDelete(false)
@@ -45,6 +49,25 @@ export default function Home() {
 
     const openConfirmDelete = () => {
         setConfirmDelete(true)
+    }
+
+    const closeAddNew = () => {
+        setAddNew(false)
+    }
+
+    const openAddNew = () => {
+        setAddNew(true)
+    }
+
+    function handleAddNew(){
+        dummyData.push({
+            name: form,
+            _id: id
+        })
+        id++
+        setForm("")
+        setAddNew(false)
+        document.getElementById("newChat").value = "" // TODO: this needs to be changed because it is kind of hacky and doesn't fully update UI
     }
 
     function displayChats(data){
@@ -66,22 +89,24 @@ export default function Home() {
             }
 
             return (
-            <ListItem disablePadding key={chat._id}>
-                <ListItemButton>
-                    <ListItemAvatar>
-                        <Avatar>
-                            {initials}
-                        </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={chat.name}/>
-                </ListItemButton>
-            </ListItem>
+            <Link href="/chat" key={chat._id}>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemAvatar>
+                            <Avatar>
+                                {initials}
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={chat.name}/>
+                    </ListItemButton>
+                </ListItem>
+            </Link>
             )
         })
 
         if(search.length === 0){
             chatList.push(
-                <ListItem disablePadding key={0}>
+                <ListItem disablePadding key={0} onClick={openAddNew}>
                     <ListItemButton>
                         <ListItemAvatar>
                             <Avatar>
@@ -154,6 +179,25 @@ export default function Home() {
                                     />
                                 </Box>
                                 {displayChats(dummyData)}
+                                <Backdrop sx={{bgcolor: "secondary.main", zIndex: (theme) => theme.zIndex.drawer + 1}} open={addNew}>
+                                    <Stack spacing={4} direction="column" justifyContent="center" alignItems="center" p="10%">
+                                        <TextField 
+                                            required 
+                                            id="newChat" 
+                                            name="newChat" 
+                                            label="Enter name..." 
+                                            type="text" 
+                                            className="stretchInput"
+                                            onChange={e => setForm(e.target.value)}
+                                        />
+                                        <Button variant="contained" size="large" onClick={closeAddNew} color="warning">
+                                            Cancel
+                                        </Button>
+                                        <Button variant="contained" size="large" startIcon={<Add/>} onClick={() => handleAddNew()} color="success">
+                                            Add Chat
+                                        </Button>
+                                    </Stack>
+                                </Backdrop>
                             </Box>
                         </Stack>
                     </Paper>
@@ -211,7 +255,7 @@ export default function Home() {
                                         <Typography>
                                             Are you sure that you want to delete your account? This action CANNOT be undone!
                                         </Typography>
-                                        <Button variant="contained" size="large" onClick={closeConfirmDelete}>
+                                        <Button variant="contained" size="large" onClick={closeConfirmDelete} color="warning">
                                             Cancel
                                         </Button>
                                         <Button variant="contained" size="large" startIcon={<Delete/>} onClick={() => handleDelete()} color="error">

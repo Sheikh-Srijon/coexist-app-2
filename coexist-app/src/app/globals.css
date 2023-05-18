@@ -1,5 +1,6 @@
 a{
-    text-decoration: none;
+    text-decoration:none;
+    color:inherit;
 }
 button{
     min-width:9rem!important;
