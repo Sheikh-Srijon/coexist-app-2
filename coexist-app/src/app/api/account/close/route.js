@@ -23,9 +23,9 @@ export async function POST(request) {
     }
 
     if(result !== false && result.deletedCount > 0){
-        return new NextResponse({init: {status: 204}})
+        return new NextResponse({}, {init: {status: 204}})
     }
     else{
-        return new NextResponse({init: {status: 409}})
+        return new NextResponse({}, {init: {status: 409}})
     }
 }

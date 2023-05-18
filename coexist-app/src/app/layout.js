@@ -40,7 +40,7 @@ function useAuth(){
   const logIn = useCallback(async (email, password) => {
     const credentials = {email: email, password: password}
 
-    axios.post("/api/account/login", credentials, {validateStatus: status => status < 399}).then(res => {
+    axios.post("/api/account/login", credentials).then(res => {
       setAuth(res.data)
       setAuthState(res.data)
       router.push("/home")
@@ -52,7 +52,7 @@ function useAuth(){
   const logOut = useCallback(async (email, password) => {
     const credentials = {email: email, password: password}
 
-    axios.post("/api/account/logout", credentials, {validateStatus: status => status < 399}).then(res => {
+    axios.post("/api/account/logout", credentials).then(res => {
       setAuth(null)
       setAuthState(null)
       router.push("/")
