@@ -28,10 +28,3 @@ if (process.env.NODE_ENV === 'development') {
 // Export a module-scoped MongoClient promise. By doing this in a
 // separate module, the client can be shared across functions.
 export default clientPromise
-
-// EXAMPLE USE TO CONNECT AND QUERY:
-// const dbClient = await client;
-// const db = dbClient.db('db-name');
-// const collection = db.collection('collection-name');
-// GET A DOC IN THE SPECIFIED COLLECTION:
-// const doc = await collection.findOne({query:""}, {...options})

@@ -6,6 +6,7 @@ import { Send, Email, Lock, LockOutlined, Phone, Person, PersonOutlined, Error }
 import "./sign_up.css"
 import { useRouter } from "next/navigation"
 import { AuthContext } from "../layout"
+import axios from "axios"
 
 export default function SignUp() {
     const router = useRouter()
@@ -20,23 +21,29 @@ export default function SignUp() {
       confirmPassword: "",
     })
   
-    function handleSubmit(e){
+    function handleSubmit(eve){
       const first = form.first.replace(/\s+/g, "")
       const last = form.last.replace(/\s+/g, "")
       const email = form.email.replace(/\s+/g, "")
       const phone = form.phone.replace(/\s+/g, "")
       const password = form.password.replace(/\s+/g, "")
       const confirmPassword = form.confirmPassword.replace(/\s+/g, "")
+
+      const errorMsg = document.querySelector("#signupErrorAlert")
   
       if(first.length === 0 || last.length === 0 || email.length === 0 || phone.length === 0 || password.length < 8 || confirmPassword.length < 8 || password !== confirmPassword){
-        const errorMsg = document.querySelector("#signupErrorAlert")
         errorMsg.classList.remove("alertHidden")
       }
       else{
-        auth.logIn(email, password)
+        axios.post("/api/account/register", form).then(res => {
+            auth.logIn(email, password)
+        }).catch(err => {
+            console.log(`The follow error has occurred and as a result you are NOT registered: ${err}`)
+            errorMsg.classList.remove("alertHidden")
+        })
       }
   
-      e.preventDefault()
+      eve.preventDefault()
     }
 
     useEffect(() => {
