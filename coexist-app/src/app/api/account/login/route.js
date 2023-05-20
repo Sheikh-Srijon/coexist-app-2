@@ -30,6 +30,6 @@ export async function POST(request) {
         )
     }
     else{
-        return new NextResponse({}, {status: 404})
+        return new NextResponse(undefined, {status: 404})
     }
 }
