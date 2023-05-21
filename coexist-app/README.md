@@ -32,3 +32,6 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+# CUSTOM INSTRUCTIONS 
+- For logging in locally, create a \coexist-app\.env.local file and type < MONGODB_URI=mongodb+srv://team6:cs194wspr-2023@dev-cluster.3ira3b7.mongodb.net/?retryWrites=true&w=majority > in it. Then run 'npm dev' again.
