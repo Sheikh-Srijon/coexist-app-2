@@ -125,7 +125,9 @@ export default function Chat({ params }) {
             <Divider />
             {/* Display dummy messages */}
             {dummyMessages.map((msg, index) => (
-                <Box key={index} p={2}>
+                <Box key={index} p={2}  sx={{
+                  textAlign: msg.sender === 'You' ? 'right' : 'left',
+                }} >
                 <Typography>
                     <b>{msg.sender}:</b> {msg.message}
                 </Typography>
