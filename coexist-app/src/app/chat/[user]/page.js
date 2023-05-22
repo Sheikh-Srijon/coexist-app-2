@@ -6,6 +6,7 @@ import { Send, Schedule, ArrowBackIosNew } from "@mui/icons-material"
 import { AuthContext } from "@/app/layout"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import axios from "axios"
 
 export default function Chat({ params }) {
   const router = useRouter()
@@ -47,13 +48,30 @@ export default function Chat({ params }) {
   ] 
 
   const handleSendMessage = () => {
+    // message for displaying - TODO: sync up with database version
     const newMessage = {
       sender: "You",
       message,
       timestamp: new Date().toLocaleTimeString(),
     } 
-    setMessageQueue((prevQueue) => [...prevQueue, newMessage]) 
-    setMessage("") 
+
+    // message for database information
+    const messageObj = {
+      sender: auth.auth.email,
+      recipient: params.user,
+      message,
+      timestamp: new Date().toLocaleTimeString(),
+      send_time: "no time" // TODO: come back to fix this for scheduling
+    } 
+
+    // post to the database
+    axios.post("/api/chat/post_message", messageObj).then(res => {
+      setMessageQueue((prevQueue) => [...prevQueue, newMessage]) 
+      setMessage("") 
+    }).catch(err => {
+        // TODO: add more thorough error checking
+        console.log(`The follow error has occurred and as a result the message has not sent: ${err}`)
+    })
   } 
 
   const handleScheduleMessageDelivery = () => {
