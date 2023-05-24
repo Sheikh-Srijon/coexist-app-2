@@ -8,26 +8,34 @@ export async function POST(request) {
 
     const body = await request.json()
 
-    // create message body for the matching DB schema
-    const message = {
-        sender: body.sender,
-        recipient: body.recipient,
-        message: body.message,
-        timestamp: body.timestamp,
-        send_time: body.send_time
-    }
-
     // insert a new message into the database
     let result;
     try{
-        result = await msgs.insertOne(message)
+        // queries the database and returns an array of documents
+        result = await msgs.find({
+            sender: body.sender,
+            recipient: body.recipient,
+        })
     } catch(e){
+        console.log(e)
         result = false
     }
 
+    // do some parsing of the result to get proper fields
     if(result !== false){
+        const retrieved = [];
+
+        // retrieves data as a list
+        for await (const doc of result) {
+            retrieved.push(doc);
+        }
+
+        // logs to local server making req
+        console.log(retrieved)
+
+        // return the list of documents
         return new NextResponse(
-            JSON.stringify(message), {
+            JSON.stringify(retrieved), {
                 status: 201,
                 headers: {
                     "content-type": "application/json"

@@ -12,61 +12,26 @@ export default function Chat({ params }) {
   const router = useRouter()
   const auth = useContext(AuthContext)
   const [message, setMessage] = useState("") 
-  const [messageQueue, setMessageQueue] = useState([]) 
+  const [messageQueue, setMessageQueue] = useState([])
+  const [fetchedMessages, setFetchMessages] = useState([]) 
 
-  const dummyMessages = [
-    {
-      sender: params.user,
-      message: "Hello!",
-      timestamp: "9:00 AM",
-    },
-    {
-      sender: "You",
-      message: "Hi! How are you?",
-      timestamp: "9:01 AM",
-    },
-    {
-      sender: params.user,
-      message: "I’m good, thanks! How about you?",
-      timestamp: "9:02 AM",
-    },
-    {
-      sender: "You",
-      message: "I’m doing great!",
-      timestamp: "9:03 AM",
-    },
-    {
-      sender: params.user,
-      message: "That’s wonderful to hear!",
-      timestamp: "9:04 AM",
-    },
-    {
-      sender: params.user,
-      message: "By the way, how’s your day going?",
-      timestamp: "9:05 AM",
-    },
-  ] 
+  // determine who is the and recipient
+  const senderEmail = auth.auth.email
+  const recipientEmail = params.user // TODO: update with real recipient email
 
   const handleSendMessage = () => {
-    // message for displaying - TODO: sync up with database version
-    const newMessage = {
-      sender: "You",
-      message,
-      timestamp: new Date().toLocaleTimeString(),
-    } 
-
     // message for database information
     const messageObj = {
-      sender: auth.auth.email,
-      recipient: params.user,
+      sender: senderEmail,
+      recipient: recipientEmail,
       message,
       timestamp: new Date().toLocaleTimeString(),
       send_time: "no time" // TODO: come back to fix this for scheduling
     } 
 
-    // post to the database
+    // post to the database and update UI
     axios.post("/api/chat/post_message", messageObj).then(res => {
-      setMessageQueue((prevQueue) => [...prevQueue, newMessage]) 
+      setMessageQueue((prevQueue) => [...prevQueue, messageObj]) 
       setMessage("") 
     }).catch(err => {
         // TODO: add more thorough error checking
@@ -83,6 +48,24 @@ export default function Chat({ params }) {
       router.push("/")
     }
   }, [])
+
+  // fetch messages on load
+  useEffect(() => {
+      // create chat data request to MongoDB endpoint
+      const chatData = {
+        sender: senderEmail,
+        recipient: recipientEmail,
+      }
+
+      // grab the documents/messages that match the chatData req query
+      axios.post("/api/chat/get_messages", chatData).then(res => {
+        console.log(res.data)
+        setFetchMessages(res.data)
+      }).catch(err => {
+          // TODO: add more thorough error checking
+          console.log(`The follow error has occurred and as a result the messages are not fetched: ${err}`)
+      })
+    },[])
 
   return (
     auth.auth === null ?
@@ -114,7 +97,9 @@ export default function Chat({ params }) {
                 </Typography>
                 {/* Display message queue */}
                 {messageQueue.map((msg, index) => (
-                <Box key={index} py={1}>
+                <Box key={index} py={1} sx={{
+                  textAlign: msg.sender === senderEmail ? 'right' : 'left',
+                    }}>
                     <Typography>{msg.message}</Typography>
                     <Typography variant="caption" color="textSecondary">
                     <b>Timestamp:</b> {msg.timestamp}
@@ -123,10 +108,10 @@ export default function Chat({ params }) {
                 ))}
             </Box>
             <Divider />
-            {/* Display dummy messages */}
-            {dummyMessages.map((msg, index) => (
+            {/* Display fetched messages */}
+            {fetchedMessages.map((msg, index) => (
                 <Box key={index} p={2}  sx={{
-                  textAlign: msg.sender === 'You' ? 'right' : 'left',
+                  textAlign: msg.sender === senderEmail ? 'right' : 'left',
                 }} >
                 <Typography>
                     <b>{msg.sender}:</b> {msg.message}
