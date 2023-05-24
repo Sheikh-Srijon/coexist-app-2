@@ -43,7 +43,7 @@ function useAuth(){
     axios.post("/api/account/login", credentials).then(res => {
       setAuth(res.data)
       setAuthState(res.data)
-      router.push("/home")
+      router.push("/home/settings")
     }).catch(err => {
       console.log(`The follow error has occurred and as a result you are NOT logged in: ${err}`)
     })

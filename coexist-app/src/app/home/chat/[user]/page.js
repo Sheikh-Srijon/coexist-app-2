@@ -2,10 +2,9 @@
 
 import { useState, useContext, useEffect } from "react" 
 import { Button, Grid, Paper, Typography, Box, TextField, MenuItem, Divider, CircularProgress } from "@mui/material" 
-import { Send, Schedule, ArrowBackIosNew } from "@mui/icons-material"
+import { Send, Schedule } from "@mui/icons-material"
 import { AuthContext } from "@/app/layout"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import axios from "axios"
 
 export default function Chat({ params }) {
@@ -90,17 +89,16 @@ export default function Chat({ params }) {
       <CircularProgress color="success"/>
     </Box> 
     :
-    <Box>
-        <Link href="/home">
-            <Button size="large" startIcon={<ArrowBackIosNew/>} className="returnButton">
-                Go Back
-            </Button>
-        </Link>
+    <Box sx={{
+      mt: {xs: "15vh", md: "10vh", xl: "5vh"},
+      ml: {xs: "0vh", sm: "25vw", md: "20vw"},
+      px: {xs: "10px", sm: "15px", md: "20px"}
+      }}>
         <Grid container spacing={2} my="25px">
         <Grid item xs={12}>
             <Paper variant="outlined">
             <Box display="flex" alignItems="center" p={2}>
-                <Typography variant="h6" component="h2" sx={{ ml: 2 }}>
+                <Typography variant="h6">
                 {params.user}
                 </Typography>
             </Box>
@@ -109,7 +107,7 @@ export default function Chat({ params }) {
         <Grid item xs={12}>
             <Paper variant="outlined" sx={{ minHeight: 300 }}>
             <Box p={2}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
+                <Typography variant="h6">
                 Message Queue
                 </Typography>
                 {/* Display message queue */}
@@ -145,12 +143,15 @@ export default function Chat({ params }) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 label="Type a message"
+                sx={{m: 2}}
             />
             <Button
+                className="wide-button"
                 variant="contained"
                 endIcon={<Send />}
                 onClick={handleSendMessage}
                 disabled={!message.trim()}
+                sx={{m: 2}}
             >
                 Send
             </Button>
@@ -163,14 +164,17 @@ export default function Chat({ params }) {
                 fullWidth
                 disabled
                 label="Schedule time"
+                sx={{m: 2}}
             >
                 <MenuItem value="">Select a time</MenuItem>
             </TextField>
             <Button
+                className="wide-button"
                 variant="contained"
                 endIcon={<Schedule />}
                 onClick={handleScheduleMessageDelivery}
                 disabled
+                sx={{m: 2}}
             >
                 Schedule Message Delivery
             </Button>

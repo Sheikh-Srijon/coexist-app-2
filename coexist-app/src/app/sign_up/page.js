@@ -49,7 +49,7 @@ export default function SignUp() {
 
     useEffect(() => {
         if(auth.auth !== null){
-            router.push("/home")
+            router.push("/home/settings")
         }
     }, [])
 
@@ -197,7 +197,7 @@ export default function SignUp() {
             </Grid>
             <Grid container item spacing={0.5} justifyContent="center" alignItems="center">
                 <Grid item xs={8} display="flex" justifyContent="center">
-                    <Button variant="contained" type="submit" endIcon={<Send/>} size="large">
+                    <Button className="wide-button" variant="contained" type="submit" endIcon={<Send/>} size="large">
                         Sign Up
                     </Button>
                 </Grid>
