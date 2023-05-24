@@ -8,7 +8,7 @@ export async function POST(request) {
 
     const body = await request.json()
 
-    // insert a new message into the database
+    // get messages
     let result;
     try{
         // queries the database and returns an array of documents
