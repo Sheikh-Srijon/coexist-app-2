@@ -13,8 +13,8 @@ export default function LandingPage() {
     <Box minHeight="90vh" display="flex" justifyContent="center" alignItems="center">
       <Stack spacing={3} direction="column" justifyContent="center" alignItems="center">
         <Image priority className="focusLogo" src={currentTheme === "lightTheme" ? "/coexistLogoLight.png" : "/coexistLogoDark.png"} width={280} height={154.5} alt="placeholder logo"></Image>
-        <Link href="/login"><Button variant="contained" size="large">Login</Button></Link>
-        <Link href="/sign_up"><Button variant="contained" size="large">Sign Up</Button></Link>
+        <Link href="/login"><Button className="wide-button" variant="contained" size="large">Login</Button></Link>
+        <Link href="/sign_up"><Button className="wide-button" variant="contained" size="large">Sign Up</Button></Link>
       </Stack>
     </Box>
   )

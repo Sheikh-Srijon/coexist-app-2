@@ -35,7 +35,7 @@ export default function Login() {
 
   useEffect(() => {
     if(auth.auth !== null){
-      router.push("/home")
+      router.push("/home/settings")
     }
   }, [])
 
@@ -92,7 +92,7 @@ export default function Login() {
             />
           </Box>
           <Box display="flex" justifyContent="center">
-            <Button variant="contained" type="submit" endIcon={<Send/>} size="large">
+            <Button className="wide-button" variant="contained" type="submit" endIcon={<Send/>} size="large">
               Login
             </Button>
           </Box>
