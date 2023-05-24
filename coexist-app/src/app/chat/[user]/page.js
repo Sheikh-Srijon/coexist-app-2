@@ -5,7 +5,7 @@ import { Button, Grid, Paper, Typography, Box, TextField, MenuItem, Divider, Cir
 import { Send, Schedule, ArrowBackIosNew } from "@mui/icons-material"
 import { AuthContext } from "@/app/layout"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
+import "./user.css"
 import axios from "axios"
 
 export default function Chat({ params }) {
@@ -13,8 +13,7 @@ export default function Chat({ params }) {
   const auth = useContext(AuthContext)
   const [message, setMessage] = useState("") 
   const [messageQueue, setMessageQueue] = useState([])
-  const [fetchedMessages, setFetchMessages] = useState([]) 
-
+  const [fetchedMessages, setFetchMessages] = useState([])
   // determine who is the and recipient
   const senderEmail = auth.auth.email
   const recipientEmail = params.user // TODO: update with real recipient email
@@ -47,6 +46,21 @@ export default function Chat({ params }) {
     if(auth.auth === null){
       router.push("/")
     }
+
+    // create chat data request to MongoDB endpoint
+    const chatData = {
+      sender: senderEmail,
+      recipient: recipientEmail,
+    }
+
+    // grab the documents/messages that match the chatData req query
+    axios.post("/api/chat/get_messages", chatData).then(res => {
+      console.log(res.data)
+      setFetchMessages(res.data)
+    }).catch(err => {
+        // TODO: add more thorough error checking
+        console.log(`The follow error has occurred and as a result the messages are not fetched: ${err}`)
+    })
   }, [])
 
   // fetch messages on load
@@ -83,50 +97,63 @@ export default function Chat({ params }) {
         <Grid item xs={12}>
             <Paper variant="outlined">
             <Box display="flex" alignItems="center" p={2}>
-                <Typography variant="h6" component="h2" sx={{ ml: 2 }}>
+                <Typography variant="h4">
                 {params.user}
                 </Typography>
             </Box>
             </Paper>
         </Grid>
         <Grid item xs={12}>
-            <Paper variant="outlined" sx={{ minHeight: 300 }}>
-            <Box p={2}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                Message Queue
-                </Typography>
-                {/* Display message queue */}
-                {messageQueue.map((msg, index) => (
-                <Box key={index} py={1} sx={{
-                  textAlign: msg.sender === senderEmail ? 'right' : 'left',
-                    }}>
-                    <Typography>{msg.message}</Typography>
-                    <Typography variant="caption" color="textSecondary">
-                    <b>Timestamp:</b> {msg.timestamp}
-                    </Typography>
-                </Box>
-                ))}
-            </Box>
+            <Paper variant="outlined" sx={{ 
+              height: "60vh",
+              overflowY: "scroll",
+              overscrollBehaviorY: "contain"
+            }}>
             <Divider />
             {/* Display fetched messages */}
             {fetchedMessages.map((msg, index) => (
                 <Box key={index} p={2}  sx={{
                   textAlign: msg.sender === senderEmail ? 'right' : 'left',
+                  pl: msg.sender === senderEmail ? {xs: "15%", sm: "20%", md: "35%", lg: "40%"} : 1,
+                  pr: msg.sender === senderEmail ? 1 : {xs: "15%", sm: "20%", md: "35%", lg: "40%"},
                 }} >
-                <Typography>
-                    <b>{msg.sender}:</b> {msg.message}
-                </Typography>
-                <Typography variant="caption" color="textSecondary">
-                    <b>Timestamp:</b> {msg.timestamp}
-                </Typography>
+                  <Typography onClick={() => {
+                    const ts = document.getElementById(`${index}ts`)
+                    ts.classList.toggle("hidden-element")
+                  }}>
+                      <b>{msg.sender}:</b> {msg.message}
+                  </Typography>
+                  <Typography variant="caption" color="textSecondary" id={`${index}ts`} className="hidden-element">
+                      {msg.timestamp}
+                  </Typography>
                 </Box>
             ))}
+            {/* Display scheduled messages */}
+            {messageQueue.map((msg, index) => (
+                <Box key={index} p={2} sx={{
+                  textAlign: "right",
+                  pl: {xs: "15%", sm: "20%", md: "35%", lg: "40%"},
+                  pr: 1
+                }}>
+                    <Typography onClick={() => {
+                      const ts = document.getElementById(`${index}ts`)
+                      ts.classList.toggle("hidden-element")
+                    }}>
+                      <b>Scheduled:</b> {msg.message}
+                    </Typography>
+                    <Typography variant="caption" color="textSecondary" id={`${index}ts`} className="hidden-element">
+                      {msg.timestamp}
+                    </Typography>
+                </Box>
+                ))}
             </Paper>
         </Grid>
         <Grid item xs={12}>
             <Paper variant="outlined" sx={{ display: "flex", alignItems: "center", p: 1 }}>
             <TextField
                 fullWidth
+                multiline
+                maxRows={4}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 label="Type a message"

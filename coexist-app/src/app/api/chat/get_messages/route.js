@@ -1,6 +1,6 @@
 import clientPromise from '@/utils/mongodb'
 import { NextResponse } from 'next/server'
- 
+
 export async function POST(request) {
     const dbClient = await clientPromise
     const db = dbClient.db("coexist_data")
@@ -29,9 +29,6 @@ export async function POST(request) {
         for await (const doc of result) {
             retrieved.push(doc);
         }
-
-        // logs to local server making req
-        console.log(retrieved)
 
         // return the list of documents
         return new NextResponse(
