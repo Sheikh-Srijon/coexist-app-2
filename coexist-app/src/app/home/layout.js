@@ -18,21 +18,9 @@ let dummyData = [
     {
         name: "Brother",
         _id: 2
-    },
-    {
-        name: "Michael Scott",
-        _id: 3
-    },
-    {
-        name: "Pam Beesly",
-        _id: 4
-    },
-    {
-        name: "Jim Halpert",
-        _id: 5
     }
 ]
-let id = 6
+let id = 3
 
 export default function HomeLayout({ children }) {
     const router = useRouter()
