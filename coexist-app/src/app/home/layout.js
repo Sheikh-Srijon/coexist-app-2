@@ -188,7 +188,7 @@ export default function HomeLayout({ children }) {
                         open={Boolean(anchorElUser)}
                         onClose={handleCloseUserMenu}
                         >
-                            <Link href="/home/settings">
+                            <Link href="/home/settings" onClick={handleCloseUserMenu}>
                                 <MenuItem>
                                     <ListItemIcon>
                                         <Settings/>
