@@ -124,7 +124,165 @@ export default function HomeLayout({ children }) {
     }, [])
 
     return (
-      children
+        auth.auth === null ?
+        <Box height="100vh" width="100vw" display="flex" justifyContent="center" alignItems="center">
+            <CircularProgress color="success"/>
+        </Box> 
+        :
+        <Box>
+            <AppBar
+                position="fixed"
+                sx={{
+                width: { xs: "100vw", sm: "75vw", md: "80vw" },
+                ml: { xs: "0vw", sm: "25vw", md: "20vw" },
+                }}
+            >
+                <Toolbar disableGutters>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={handleDrawerToggle}
+                        sx={{justifySelf: "start", mx: 4, display: {xs: "inline-flex", sm: "none"}}}
+                    >
+                        <MenuIcon/>
+                    </IconButton>
+
+                    <Typography
+                        variant="h6"
+                        noWrap
+                        sx={{
+                        mx: 4,
+                        display: "flex",
+                        flexGrow: 1,
+                        justifyContent: {xs: "center", sm: "start"},
+                        fontWeight: 700,
+                        letterSpacing: '.3rem',
+                        color: 'inherit',
+                        textDecoration: 'none',
+                        }}
+                    >
+                        Hi, {auth.auth.firstName}
+                    </Typography>
+
+                    <Box sx={{justifySelf: "end"}}>
+                        <Tooltip title="Open your profile">
+                        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, mx: 3 }}>
+                            <Avatar sx={{bgcolor: "secondary.light"}}>
+                                U
+                            </Avatar>
+                        </IconButton>
+                        </Tooltip>
+                        <Menu
+                        sx={{ mt: '45px' }}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                        >
+                            <Link href="/home/settings">
+                                <MenuItem>
+                                    <ListItemIcon>
+                                        <Settings/>
+                                    </ListItemIcon>
+                                    Settings
+                                </MenuItem>
+                            </Link>
+                            <MenuItem onClick={() => handleLogout()}>
+                                <ListItemIcon>
+                                    <Logout/>
+                                </ListItemIcon>
+                                Logout
+                            </MenuItem>
+                        </Menu>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+            <Box
+                component="nav"
+                sx={{ width: { sm: "20%" }, flexShrink: { sm: 0 } }}
+                aria-label="chat navigation"
+            >
+                <Drawer
+                    variant="temporary"
+                    open={mobileOpen}
+                    onClose={handleDrawerToggle}
+                    ModalProps={{
+                        keepMounted: true,
+                    }}
+                    sx={{
+                        display: { xs: 'block', sm: 'none' },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw" },
+                    }}
+                    >
+                    <Box display="flex" alignItems="center" p="15px" pb="5px">
+                        <Search sx={{mr:1, my:0.5}}/>
+                        <TextField
+                            type="text" 
+                            id="search" 
+                            name="search" 
+                            label="Search contacts..." 
+                            sx={{width:1}} 
+                            onChange={e => 
+                                setSearch(e.target.value)
+                            }
+                        />
+                    </Box>
+                    {getChats(dummyData)}
+                </Drawer>
+                <Drawer
+                    variant="permanent"
+                    sx={{
+                        display: { xs: 'none', sm: 'block' },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, },
+                    }}
+                    open
+                    >
+                    <Box display="flex" alignItems="center" p="15px" pb="5px"> 
+                        <Search sx={{mr:1, my:0.5}}/>
+                        <TextField
+                            type="text" 
+                            id="search" 
+                            name="search" 
+                            label="Search contacts..." 
+                            sx={{width:1}} 
+                            onChange={e => 
+                                setSearch(e.target.value)
+                            }
+                        />
+                    </Box>
+                    {getChats(dummyData)}
+                </Drawer>
+                <Backdrop sx={{bgcolor: "secondary.main", zIndex: (theme) => theme.zIndex.drawer + 1}} open={addNew}>
+                    <Stack spacing={4} direction="column" justifyContent="center" alignItems="center" p="10%">
+                        <TextField 
+                            required 
+                            id="newChat" 
+                            name="newChat" 
+                            label="Enter name..." 
+                            type="text" 
+                            className="stretchInput"
+                            onChange={e => setForm(e.target.value)}
+                        />
+                        <Button variant="contained" size="large" onClick={handleAddNewToggle} color="warning">
+                            Cancel
+                        </Button>
+                        <Button variant="contained" size="large" startIcon={<Add/>} onClick={() => handleAddNew()} color="success">
+                            Add Chat
+                        </Button>
+                    </Stack>
+                </Backdrop>
+            </Box>
+
+            {children}
+        </Box>
     )
-  }
-  
+}

@@ -2,8 +2,8 @@ a{
     text-decoration:none;
     color:inherit;
 }
-button{
-    min-width:9rem!important;
+.wide-button{
+    min-width:10rem!important;
 }
 .focusLogo{
     height:auto;
