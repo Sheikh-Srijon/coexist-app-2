@@ -11,9 +11,9 @@
     width:20rem;
 }
 .fieldError{
+    text-align:center;
     border-radius:10px;
     padding:10px;
-    padding-left:14px;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     margin:15px;
     animation:0.125s alert;

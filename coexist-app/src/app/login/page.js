@@ -7,18 +7,21 @@ import "./login.css"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AuthContext } from "../layout"
+import axios from "axios"
 
 export default function Login() {
   const router = useRouter()
   const auth = useContext(AuthContext)
 
+  // State that keeps track of the login form's values
   const [form, setForm] = useState({
     email: "",
     password: "",
   })
 
+  // Wrapper for submitting login form
   function handleSubmit(e){
-    const email = form.email.replace(/\s+/g, "")
+    const email = form.email.trim()
     const password = form.password.replace(/\s+/g, "")
 
     const errorMsg = document.querySelector("#loginErrorAlert")
@@ -27,7 +30,11 @@ export default function Login() {
       errorMsg.classList.remove("alertHidden")
     }
     else{
-      auth.logIn(email, password)
+      axios.post("/api/account/login", {email: email, password: password}).then(res => {
+        auth.logIn(res.data)
+      }).catch(err => {
+        errorMsg.classList.remove("alertHidden")
+      })
     }
 
     e.preventDefault()
@@ -55,7 +62,7 @@ export default function Login() {
         <Stack spacing={2}>
           <Box className="fieldError alertHidden" id="loginErrorAlert" sx={{color: "error.contrastText", bgcolor: "error.main"}}>
             <Error/>
-            <span>Incorrect username and/or password</span>
+            <span>Incorrect email and/or password</span>
           </Box>
           <Box className="iconGroup">
             <Email/>

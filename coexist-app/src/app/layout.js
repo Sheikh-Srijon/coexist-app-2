@@ -37,16 +37,10 @@ function useAuth(){
   const [auth, setAuthState] = useState(getAuth())
   const router = useRouter()
 
-  const logIn = useCallback(async (email, password) => {
-    const credentials = {email: email, password: password}
-
-    axios.post("/api/account/login", credentials).then(res => {
-      setAuth(res.data)
-      setAuthState(res.data)
-      router.push("/home/settings")
-    }).catch(err => {
-      console.log(`The follow error has occurred and as a result you are NOT logged in: ${err}`)
-    })
+  const logIn = useCallback(async (user) => {
+    setAuth(user)
+    setAuthState(user)
+    router.push("/home/settings")
   }, [setAuthState])
 
   const logOut = useCallback(async (email, password) => {
