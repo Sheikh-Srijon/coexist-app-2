@@ -63,24 +63,6 @@ export default function Chat({ params }) {
     })
   }, [])
 
-  // fetch messages on load
-  useEffect(() => {
-      // create chat data request to MongoDB endpoint
-      const chatData = {
-        sender: senderEmail,
-        recipient: recipientEmail,
-      }
-
-      // grab the documents/messages that match the chatData req query
-      axios.post("/api/chat/get_messages", chatData).then(res => {
-        console.log(res.data)
-        setFetchMessages(res.data)
-      }).catch(err => {
-          // TODO: add more thorough error checking
-          console.log(`The follow error has occurred and as a result the messages are not fetched: ${err}`)
-      })
-    },[])
-
   return (
     auth.auth === null ?
     <Box height="100vh" width="100vw" display="flex" justifyContent="center" alignItems="center">
