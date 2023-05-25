@@ -1,7 +1,7 @@
 "use client"
 
 import { useContext, useState, useEffect } from "react"
-import { AppBar, Button, Stack, Box, Typography, Backdrop, List, ListItem, ListItemIcon, ListItemButton, ListItemText, ListItemAvatar, Avatar, TextField, CircularProgress, Toolbar, IconButton, Tooltip, Menu, MenuItem, Drawer } from "@mui/material"
+import { AppBar, Button, Stack, Box, Typography, Backdrop, List, ListItem, ListItemIcon, ListItemButton, ListItemText, ListItemAvatar, Avatar, TextField, CircularProgress, Toolbar, IconButton, Tooltip, Menu, MenuItem, Drawer, InputAdornment } from "@mui/material"
 import { Logout, Settings, Add, Search } from "@mui/icons-material"
 import MenuIcon from "@mui/icons-material/Menu"
 import "./home.css"
@@ -149,14 +149,13 @@ export default function HomeLayout({ children }) {
 
                     <Typography
                         variant="h6"
-                        noWrap
                         sx={{
                         mx: 4,
                         display: "flex",
                         flexGrow: 1,
                         justifyContent: {xs: "center", sm: "start"},
                         fontWeight: 700,
-                        letterSpacing: '.3rem',
+                        letterSpacing: "0.1rem",
                         color: 'inherit',
                         textDecoration: 'none',
                         }}
@@ -168,7 +167,7 @@ export default function HomeLayout({ children }) {
                         <Tooltip title="Open your profile">
                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, mx: 3 }}>
                             <Avatar sx={{bgcolor: "secondary.light"}}>
-                                U
+                                {auth.auth.firstName[0]}
                             </Avatar>
                         </IconButton>
                         </Tooltip>
@@ -208,7 +207,7 @@ export default function HomeLayout({ children }) {
             </AppBar>
             <Box
                 component="nav"
-                sx={{ width: { sm: "20%" }, flexShrink: { sm: 0 } }}
+                sx={{ width: { sm: "25vw", md: "20vw" }, flexShrink: { sm: 0 }}}
                 aria-label="chat navigation"
             >
                 <Drawer
@@ -220,20 +219,35 @@ export default function HomeLayout({ children }) {
                     }}
                     sx={{
                         display: { xs: 'block', sm: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw" },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark" },
                     }}
+                >
+                    <Typography
+                        variant="h6"
+                        sx={{
+                        m: 1,
+                        fontWeight: 700,
+                        textAlign: "center",
+                        letterSpacing: "0.1rem",
+                        color: 'inherit',
+                        textDecoration: 'none',
+                        }}
                     >
-                    <Box display="flex" alignItems="center" p="15px" pb="5px">
-                        <Search sx={{mr:1, my:0.5}}/>
+                        Chats
+                    </Typography>
+                    <Box display="flex" alignItems="center" p="15px" pb="5px"> 
                         <TextField
                             type="text" 
                             id="search" 
                             name="search" 
-                            label="Search contacts..." 
+                            label="Search" 
                             sx={{width:1}} 
                             onChange={e => 
                                 setSearch(e.target.value)
                             }
+                            InputProps={{
+                                endAdornment: <InputAdornment position="end"><Search/></InputAdornment>,
+                            }}
                         />
                     </Box>
                     {getChats(dummyData)}
@@ -242,21 +256,36 @@ export default function HomeLayout({ children }) {
                     variant="permanent"
                     sx={{
                         display: { xs: 'none', sm: 'block' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark" },
                     }}
                     open
+                >
+                    <Typography
+                        variant="h6"
+                        sx={{
+                        m: 2,
+                        fontWeight: 700,
+                        textAlign: "center",
+                        letterSpacing: "0.1rem",
+                        color: 'inherit',
+                        textDecoration: 'none',
+                        }}
                     >
+                        Chats
+                    </Typography>
                     <Box display="flex" alignItems="center" p="15px" pb="5px"> 
-                        <Search sx={{mr:1, my:0.5}}/>
                         <TextField
                             type="text" 
                             id="search" 
                             name="search" 
-                            label="Search contacts..." 
+                            label="Search" 
                             sx={{width:1}} 
                             onChange={e => 
                                 setSearch(e.target.value)
                             }
+                            InputProps={{
+                                endAdornment: <InputAdornment position="end"><Search/></InputAdornment>,
+                            }}
                         />
                     </Box>
                     {getChats(dummyData)}
