@@ -105,7 +105,7 @@ export default function Chat({ params }) {
         <Grid item xs={12}>
             <Paper variant="outlined" sx={{ 
               height: "60vh",
-              overflowY: "scroll",
+              overflowY: "auto",
               overscrollBehaviorY: "contain"
             }}>
             <Divider />

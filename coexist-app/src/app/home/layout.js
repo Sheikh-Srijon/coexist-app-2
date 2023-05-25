@@ -219,7 +219,7 @@ export default function HomeLayout({ children }) {
                     }}
                     sx={{
                         display: { xs: 'block', sm: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark" },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark", overscrollBehaviorY: "contain" },
                     }}
                 >
                     <Typography
@@ -256,7 +256,7 @@ export default function HomeLayout({ children }) {
                     variant="permanent"
                     sx={{
                         display: { xs: 'none', sm: 'block' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark" },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark", overscrollBehaviorY: "contain" },
                     }}
                     open
                 >
