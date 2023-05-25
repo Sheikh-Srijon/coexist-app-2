@@ -80,7 +80,7 @@ export default function HomeLayout({ children }) {
                 <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemAvatar>
-                            <Avatar>
+                            <Avatar sx={{color: "inherit"}}>
                                 {initials}
                             </Avatar>
                         </ListItemAvatar>
@@ -96,7 +96,7 @@ export default function HomeLayout({ children }) {
                 <ListItem disablePadding key={0} onClick={handleAddNewToggle}>
                     <ListItemButton>
                         <ListItemAvatar>
-                            <Avatar>
+                            <Avatar sx={{color: "inherit"}}>
                                 <Add/>
                             </Avatar>
                         </ListItemAvatar>
@@ -166,7 +166,7 @@ export default function HomeLayout({ children }) {
                     <Box sx={{justifySelf: "end"}}>
                         <Tooltip title="Open your profile">
                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, mx: 3 }}>
-                            <Avatar sx={{bgcolor: "secondary.light"}}>
+                            <Avatar sx={{bgcolor: "secondary.light", color: "inherit"}}>
                                 {auth.auth.firstName[0]}
                             </Avatar>
                         </IconButton>
