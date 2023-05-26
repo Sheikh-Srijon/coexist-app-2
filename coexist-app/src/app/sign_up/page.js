@@ -191,7 +191,7 @@ export default function SignUp() {
                 <Grid item xs={8} display="flex" justifyContent="center">
                     <Box className="fieldError alertHidden" id="signupErrorAlert" sx={{color: "error.contrastText", bgcolor: "error.main"}}>
                         <Error/>
-                        <span>We're sorry, an internal error has occurred. Please try again later.</span>
+                        <span>We&rsquo;re sorry, an internal error has occurred. Please try again later.</span>
                     </Box>
                 </Grid>
             </Grid>
