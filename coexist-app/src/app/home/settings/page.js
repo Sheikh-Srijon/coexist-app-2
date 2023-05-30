@@ -5,10 +5,12 @@ import { Button, Box, Stack, CircularProgress, Backdrop, Typography } from "@mui
 import { Delete } from "@mui/icons-material"
 import Image from "next/image"
 import { ThemeContext, AuthContext } from "@/app/layout"
+import { ViewContext } from "../layout"
 import axios from "axios"
 
 export default function SettingsPage() {
     const auth = useContext(AuthContext)
+    const view = useContext(ViewContext)
     const currentTheme = useContext(ThemeContext)
     const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -28,6 +30,8 @@ export default function SettingsPage() {
         if(auth.auth === null){
             router.push("/")
         }
+
+        view.changeView(`Hi, ${auth.auth.firstName}`)
     }, [])
 
     return (
