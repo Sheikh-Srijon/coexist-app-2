@@ -63,8 +63,7 @@ export default function Chat({ params }) {
 
     // grab the documents/messages that match the messageData req query
     axios.post("/api/message/get_messages", messageData).then(res => {
-      console.log(res.data)
-      setFetchMessages(res.data)
+        setFetchMessages(res.data)
     }).catch(err => {
         // TODO: add more thorough error checking
         console.log(`The follow error has occurred and as a result the messages are not fetched: ${err}`)
@@ -81,7 +80,7 @@ export default function Chat({ params }) {
       <Fade in={showError} timeout={500} addEndListener={() => {
         setTimeout(() => setShowError(false), 3500)
       }}>
-        <Alert id="errorAlert" severity="error" 
+        <Alert severity="error" 
           sx={{top: "1rem", marginX: "1rem", position: "fixed", zIndex: (theme) => theme.zIndex.drawer + 1}}
           onClose={() => {setShowError(false)}}
         >
@@ -92,7 +91,7 @@ export default function Chat({ params }) {
       <Fade in={showSuccess} timeout={500} addEndListener={() => {
         setTimeout(() => setShowSuccess(false), 3500)
       }}>
-        <Alert id="successAlert" severity="success" 
+        <Alert severity="success" 
           sx={{top: "1rem", marginX: "1rem", position: "fixed", zIndex: (theme) => theme.zIndex.drawer + 1}}
           onClose={() => {setShowSuccess(false)}}
         >
