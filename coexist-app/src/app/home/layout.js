@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useState, useEffect } from "react"
+import { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { AppBar, Button, Stack, Box, Typography, Backdrop, List, ListItem, ListItemIcon, ListItemButton, ListItemText, ListItemAvatar, Avatar, TextField, CircularProgress, Toolbar, IconButton, Tooltip, Menu, MenuItem, Drawer, InputAdornment } from "@mui/material"
 import { Logout, Settings, Add, Search } from "@mui/icons-material"
 import MenuIcon from "@mui/icons-material/Menu"
@@ -22,14 +22,27 @@ let dummyData = [
 ]
 let id = 3
 
+export const ViewContext = createContext(null)
+
+function useView(){
+    const [currentView, setCurrentView] = useState("")
+
+    const changeView = useCallback((newView) => {
+        setCurrentView(newView)
+    }, [setCurrentView])
+
+    return {currentView, changeView}
+}
+
 export default function HomeLayout({ children }) {
     const router = useRouter()
     const auth = useContext(AuthContext)
+    const view = useView()
     const [mobileOpen, setMobileOpen] = useState(false)
     const [addNew, setAddNew] = useState(false)
     const [search, setSearch] = useState("")
     const [form, setForm] = useState("")
-    const [anchorElUser, setAnchorElUser] = useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null)
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen)
@@ -129,189 +142,191 @@ export default function HomeLayout({ children }) {
             <CircularProgress color="success"/>
         </Box> 
         :
-        <Box>
-            <AppBar
-                position="fixed"
-                sx={{
-                width: { xs: "100vw", sm: "75vw", md: "80vw" },
-                ml: { xs: "0vw", sm: "25vw", md: "20vw" },
-                }}
-            >
-                <Toolbar disableGutters>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerToggle}
-                        sx={{justifySelf: "start", mx: 4, display: {xs: "inline-flex", sm: "none"}}}
-                    >
-                        <MenuIcon/>
-                    </IconButton>
-
-                    <Typography
-                        variant="h6"
-                        sx={{
-                        mx: 4,
-                        display: "flex",
-                        flexGrow: 1,
-                        justifyContent: {xs: "center", sm: "start"},
-                        fontWeight: 700,
-                        letterSpacing: "0.1rem",
-                        color: 'inherit',
-                        textDecoration: 'none',
-                        }}
-                    >
-                        Hi, {auth.auth.firstName}
-                    </Typography>
-
-                    <Box sx={{justifySelf: "end"}}>
-                        <Tooltip title="Open your profile">
-                        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, mx: 3 }}>
-                            <Avatar sx={{bgcolor: "secondary.light", color: "inherit"}}>
-                                {auth.auth.firstName[0]}
-                            </Avatar>
-                        </IconButton>
-                        </Tooltip>
-                        <Menu
-                        sx={{ mt: '45px' }}
-                        id="menu-appbar"
-                        anchorEl={anchorElUser}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        keepMounted
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        open={Boolean(anchorElUser)}
-                        onClose={handleCloseUserMenu}
+        <ViewContext.Provider value={view}>
+            <Box>
+                <AppBar
+                    position="fixed"
+                    sx={{
+                    width: { xs: "100vw", sm: "75vw", md: "80vw" },
+                    ml: { xs: "0vw", sm: "25vw", md: "20vw" },
+                    }}
+                >
+                    <Toolbar disableGutters>
+                        <IconButton
+                            color="inherit"
+                            aria-label="open drawer"
+                            onClick={handleDrawerToggle}
+                            sx={{justifySelf: "start", mx: 4, display: {xs: "inline-flex", sm: "none"}}}
                         >
-                            <Link href="/home/settings" onClick={handleCloseUserMenu}>
-                                <MenuItem>
-                                    <ListItemIcon>
-                                        <Settings/>
-                                    </ListItemIcon>
-                                    Settings
-                                </MenuItem>
-                            </Link>
-                            <MenuItem onClick={() => handleLogout()}>
-                                <ListItemIcon>
-                                    <Logout/>
-                                </ListItemIcon>
-                                Logout
-                            </MenuItem>
-                        </Menu>
-                    </Box>
-                </Toolbar>
-            </AppBar>
-            <Box
-                component="nav"
-                sx={{ width: { sm: "25vw", md: "20vw" }, flexShrink: { sm: 0 }}}
-                aria-label="chat navigation"
-            >
-                <Drawer
-                    variant="temporary"
-                    open={mobileOpen}
-                    onClose={handleDrawerToggle}
-                    ModalProps={{
-                        keepMounted: true,
-                    }}
-                    sx={{
-                        display: { xs: 'block', sm: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark", overscrollBehaviorY: "contain" },
-                    }}
-                >
-                    <Typography
-                        variant="h6"
-                        sx={{
-                        m: 1,
-                        fontWeight: 700,
-                        textAlign: "center",
-                        letterSpacing: "0.1rem",
-                        color: 'inherit',
-                        textDecoration: 'none',
-                        }}
-                    >
-                        Chats
-                    </Typography>
-                    <Box display="flex" alignItems="center" p="15px" pb="5px"> 
-                        <TextField
-                            type="text" 
-                            id="search" 
-                            name="search" 
-                            label="Search" 
-                            sx={{width:1}} 
-                            onChange={e => 
-                                setSearch(e.target.value)
-                            }
-                            InputProps={{
-                                endAdornment: <InputAdornment position="end"><Search/></InputAdornment>,
-                            }}
-                        />
-                    </Box>
-                    {getChats(dummyData)}
-                </Drawer>
-                <Drawer
-                    variant="permanent"
-                    sx={{
-                        display: { xs: 'none', sm: 'block' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark", overscrollBehaviorY: "contain" },
-                    }}
-                    open
-                >
-                    <Typography
-                        variant="h6"
-                        sx={{
-                        m: 2,
-                        fontWeight: 700,
-                        textAlign: "center",
-                        letterSpacing: "0.1rem",
-                        color: 'inherit',
-                        textDecoration: 'none',
-                        }}
-                    >
-                        Chats
-                    </Typography>
-                    <Box display="flex" alignItems="center" p="15px" pb="5px"> 
-                        <TextField
-                            type="text" 
-                            id="search" 
-                            name="search" 
-                            label="Search" 
-                            sx={{width:1}} 
-                            onChange={e => 
-                                setSearch(e.target.value)
-                            }
-                            InputProps={{
-                                endAdornment: <InputAdornment position="end"><Search/></InputAdornment>,
-                            }}
-                        />
-                    </Box>
-                    {getChats(dummyData)}
-                </Drawer>
-                <Backdrop sx={{bgcolor: "secondary.main", zIndex: (theme) => theme.zIndex.drawer + 1}} open={addNew}>
-                    <Stack spacing={4} direction="column" justifyContent="center" alignItems="center" p="10%">
-                        <TextField 
-                            required 
-                            id="newChat" 
-                            name="newChat" 
-                            label="Enter name..." 
-                            type="text" 
-                            className="stretchInput"
-                            onChange={e => setForm(e.target.value)}
-                        />
-                        <Button variant="contained" size="large" onClick={handleAddNewToggle} color="warning">
-                            Cancel
-                        </Button>
-                        <Button variant="contained" size="large" startIcon={<Add/>} onClick={() => handleAddNew()} color="success">
-                            Add Chat
-                        </Button>
-                    </Stack>
-                </Backdrop>
-            </Box>
+                            <MenuIcon/>
+                        </IconButton>
 
-            {children}
-        </Box>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                            mx: 4,
+                            display: "flex",
+                            flexGrow: 1,
+                            justifyContent: {xs: "center", sm: "start"},
+                            fontWeight: 700,
+                            letterSpacing: "0.1rem",
+                            color: 'inherit',
+                            textDecoration: 'none',
+                            }}
+                        >
+                            {view.currentView}
+                        </Typography>
+
+                        <Box sx={{justifySelf: "end"}}>
+                            <Tooltip title="Open your profile">
+                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, mx: 3 }}>
+                                <Avatar sx={{bgcolor: "secondary.light", color: "inherit"}}>
+                                    {auth.auth.firstName[0]}
+                                </Avatar>
+                            </IconButton>
+                            </Tooltip>
+                            <Menu
+                            sx={{ mt: '45px' }}
+                            id="menu-appbar"
+                            anchorEl={anchorElUser}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={Boolean(anchorElUser)}
+                            onClose={handleCloseUserMenu}
+                            >
+                                <Link href="/home/settings" onClick={handleCloseUserMenu}>
+                                    <MenuItem>
+                                        <ListItemIcon>
+                                            <Settings/>
+                                        </ListItemIcon>
+                                        Settings
+                                    </MenuItem>
+                                </Link>
+                                <MenuItem onClick={() => handleLogout()}>
+                                    <ListItemIcon>
+                                        <Logout/>
+                                    </ListItemIcon>
+                                    Logout
+                                </MenuItem>
+                            </Menu>
+                        </Box>
+                    </Toolbar>
+                </AppBar>
+                <Box
+                    component="nav"
+                    sx={{ width: { sm: "25vw", md: "20vw" }, flexShrink: { sm: 0 }}}
+                    aria-label="chat navigation"
+                >
+                    <Drawer
+                        variant="temporary"
+                        open={mobileOpen}
+                        onClose={handleDrawerToggle}
+                        ModalProps={{
+                            keepMounted: true,
+                        }}
+                        sx={{
+                            display: { xs: 'block', sm: 'none' },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark", overscrollBehaviorY: "contain" },
+                        }}
+                    >
+                        <Typography
+                            variant="h6"
+                            sx={{
+                            m: 1,
+                            fontWeight: 700,
+                            textAlign: "center",
+                            letterSpacing: "0.1rem",
+                            color: 'inherit',
+                            textDecoration: 'none',
+                            }}
+                        >
+                            Chats
+                        </Typography>
+                        <Box display="flex" alignItems="center" p="15px" pb="5px"> 
+                            <TextField
+                                type="text" 
+                                id="search" 
+                                name="search" 
+                                label="Search" 
+                                sx={{width:1}} 
+                                onChange={e => 
+                                    setSearch(e.target.value)
+                                }
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end"><Search/></InputAdornment>,
+                                }}
+                            />
+                        </Box>
+                        {getChats(dummyData)}
+                    </Drawer>
+                    <Drawer
+                        variant="permanent"
+                        sx={{
+                            display: { xs: 'none', sm: 'block' },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark", overscrollBehaviorY: "contain" },
+                        }}
+                        open
+                    >
+                        <Typography
+                            variant="h6"
+                            sx={{
+                            m: 2,
+                            fontWeight: 700,
+                            textAlign: "center",
+                            letterSpacing: "0.1rem",
+                            color: 'inherit',
+                            textDecoration: 'none',
+                            }}
+                        >
+                            Chats
+                        </Typography>
+                        <Box display="flex" alignItems="center" p="15px" pb="5px"> 
+                            <TextField
+                                type="text" 
+                                id="search" 
+                                name="search" 
+                                label="Search" 
+                                sx={{width:1}} 
+                                onChange={e => 
+                                    setSearch(e.target.value)
+                                }
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end"><Search/></InputAdornment>,
+                                }}
+                            />
+                        </Box>
+                        {getChats(dummyData)}
+                    </Drawer>
+                    <Backdrop sx={{bgcolor: "secondary.main", zIndex: (theme) => theme.zIndex.drawer + 1}} open={addNew}>
+                        <Stack spacing={4} direction="column" justifyContent="center" alignItems="center" p="10%">
+                            <TextField 
+                                required 
+                                id="newChat" 
+                                name="newChat" 
+                                label="Enter name..." 
+                                type="text" 
+                                className="stretchInput"
+                                onChange={e => setForm(e.target.value)}
+                            />
+                            <Button variant="contained" size="large" onClick={handleAddNewToggle} color="warning">
+                                Cancel
+                            </Button>
+                            <Button variant="contained" size="large" startIcon={<Add/>} onClick={() => handleAddNew()} color="success">
+                                Add Chat
+                            </Button>
+                        </Stack>
+                    </Backdrop>
+                </Box>
+
+                {children}
+            </Box>
+        </ViewContext.Provider>
     )
 }
