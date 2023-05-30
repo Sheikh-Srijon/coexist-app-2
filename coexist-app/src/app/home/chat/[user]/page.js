@@ -36,7 +36,7 @@ export default function Chat({ params }) {
     axios.post("/api/message/post_message", messageObj).then(res => {
       setMessageQueue((prevQueue) => [...prevQueue, messageObj]) 
       setMessage("") 
-      setShowSuccess(true)
+      setShowSuccess(true)      
     }).catch(err => {
         // TODO: add more thorough error checking
         console.log(`The follow error has occurred and as a result the message has not sent: ${err}`)
@@ -79,10 +79,10 @@ export default function Chat({ params }) {
     :
     <Box>
       <Fade in={showError} timeout={500} addEndListener={() => {
-        setTimeout(() => setShowError(false), 5000)
+        setTimeout(() => setShowError(false), 3500)
       }}>
         <Alert id="errorAlert" severity="error" 
-          sx={{top: "1rem", marginX: "1rem", position: "absolute", zIndex: (theme) => theme.zIndex.drawer + 1}}
+          sx={{top: "1rem", marginX: "1rem", position: "fixed", zIndex: (theme) => theme.zIndex.drawer + 1}}
           onClose={() => {setShowError(false)}}
         >
           <AlertTitle>Error</AlertTitle>
@@ -90,10 +90,10 @@ export default function Chat({ params }) {
         </Alert>
       </Fade>
       <Fade in={showSuccess} timeout={500} addEndListener={() => {
-        setTimeout(() => setShowSuccess(false), 5000)
+        setTimeout(() => setShowSuccess(false), 3500)
       }}>
         <Alert id="successAlert" severity="success" 
-          sx={{top: "1rem", marginX: "1rem", position: "absolute", zIndex: (theme) => theme.zIndex.drawer + 1}}
+          sx={{top: "1rem", marginX: "1rem", position: "fixed", zIndex: (theme) => theme.zIndex.drawer + 1}}
           onClose={() => {setShowSuccess(false)}}
         >
           <AlertTitle>Success</AlertTitle>
@@ -112,7 +112,6 @@ export default function Chat({ params }) {
                 overflowY: "auto",
                 overscrollBehaviorY: "contain"
               }}>
-              <Divider />
               {/* Display fetched messages */}
               {fetchedMessages.map((msg, index) => (
                   <Box key={index} p={2}  sx={{
@@ -131,6 +130,7 @@ export default function Chat({ params }) {
                     </Typography>
                   </Box>
               ))}
+              {messageQueue.length > 0 ? <Divider>Scheduled Messages</Divider> : ""}
               {/* Display scheduled messages */}
               {messageQueue.map((msg, index) => (
                   <Box key={index} p={2} sx={{
@@ -144,11 +144,11 @@ export default function Chat({ params }) {
                       }}>
                         <b>Scheduled:</b> {msg.message}
                       </Typography>
-                      <Typography variant="caption" color="textSecondary" id={`${index}ts`} className="hidden-element">
+                      <Typography variant="caption" color="textSecondary" id={`${index}qTs`} className="hidden-element">
                         {msg.timestamp}
                       </Typography>
                   </Box>
-                  ))}
+                ))}
               </Paper>
           </Grid>
           <Grid item xs={12}>
