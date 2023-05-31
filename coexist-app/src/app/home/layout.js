@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
-import { AppBar, Button, Stack, Box, Typography, Backdrop, List, ListItem, ListItemIcon, ListItemButton, ListItemText, ListItemAvatar, Avatar, TextField, CircularProgress, Toolbar, IconButton, Tooltip, Menu, MenuItem, Drawer, InputAdornment } from "@mui/material"
+import { AppBar, Button, Box, Fade, Alert, AlertTitle, Typography, List, ListItem, ListItemIcon, ListItemButton, ListItemText, ListItemAvatar, Avatar, TextField, CircularProgress, Toolbar, IconButton, Tooltip, Menu, MenuItem, Drawer, InputAdornment, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material"
 import { Logout, Settings, Add, Search } from "@mui/icons-material"
 import MenuIcon from "@mui/icons-material/Menu"
 import "./home.css"
@@ -9,18 +9,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AuthContext } from "../layout"
 import fuzzysort from "fuzzysort"
-
-let dummyData = [
-    {
-        name: "Mom",
-        _id: 1
-    },
-    {
-        name: "Brother",
-        _id: 2
-    }
-]
-let id = 3
+import axios from "axios"
 
 export const ViewContext = createContext(null)
 
@@ -43,6 +32,9 @@ export default function HomeLayout({ children }) {
     const [search, setSearch] = useState("")
     const [form, setForm] = useState("")
     const [anchorElUser, setAnchorElUser] = useState(null)
+    const [showChatError, setShowChatError] = useState(false)
+    const [showChatSuccess, setShowChatSuccess] = useState(false)
+    const [chats, setChats] = useState([])
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen)
@@ -61,14 +53,22 @@ export default function HomeLayout({ children }) {
     };
 
     function handleAddNew(){
-        dummyData.push({
-            name: form,
-            _id: id
+        const data = {
+            user: auth.auth,
+            newEmail: form
+        }
+
+        axios.post("/api/chat/add_chat", data).then(res => {
+            setChats((prevChats) => [...prevChats, res.data])
+            setShowChatSuccess(true)
+            setForm("")
+        }).catch(err => {
+            // TODO: add more thorough error checking
+            console.log(`The follow error has occurred and as a result the chats are not fetched: ${err}`)
+            setShowChatError(true)
         })
-        id++
-        setForm("")
+
         setAddNew(false)
-        document.getElementById("newChat").value = "" // TODO: this needs to be changed because it is kind of hacky and doesn't fully update UI
     }
 
     function getChats(data){
@@ -81,7 +81,8 @@ export default function HomeLayout({ children }) {
         }
         
         chatList = wantedChats.map(chat => {
-            const words = chat.name.split(" ")
+            // chat is currently a list of emails that correspond to the users involved in a chat; for now this is just two people (so only one name is returned)
+            const words = chat.join(", ") // TODO: replace this so it picks first and last name and change the code below accordingly
             let initials = words[0][0]
 
             if(words.length > 1){
@@ -89,7 +90,7 @@ export default function HomeLayout({ children }) {
             }
 
             return (
-            <Link href={`/home/chat/${chat.name}`} key={chat._id}>
+            <Link href={`/home/chat/${chat}`} key={chat._id}>
                 <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemAvatar>
@@ -97,27 +98,12 @@ export default function HomeLayout({ children }) {
                                 {initials}
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary={chat.name}/>
+                        <ListItemText primary={chat}/>
                     </ListItemButton>
                 </ListItem>
             </Link>
             )
         })
-
-        if(search.length === 0){
-            chatList.push(
-                <ListItem disablePadding key={0} onClick={handleAddNewToggle}>
-                    <ListItemButton>
-                        <ListItemAvatar>
-                            <Avatar sx={{color: "inherit"}}>
-                                <Add/>
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary="Add New"/>
-                    </ListItemButton>
-                </ListItem>
-            )
-        }
 
         return (
             <List>
@@ -134,6 +120,13 @@ export default function HomeLayout({ children }) {
         if(auth.auth === null){
             router.push("/")
         }
+
+        axios.post("/api/chat/get_chats", auth.auth).then(res => {
+            setChats(res.data)
+        }).catch(err => {
+            // TODO: add more thorough error checking
+            console.log(`The follow error has occurred and as a result the chats are not fetched: ${err}`)
+        })
     }, [])
 
     return (
@@ -144,6 +137,28 @@ export default function HomeLayout({ children }) {
         :
         <ViewContext.Provider value={view}>
             <Box>
+                <Fade in={showChatError} timeout={500} addEndListener={() => {
+                    setTimeout(() => setShowChatError(false), 3500)
+                }}>
+                    <Alert severity="error" 
+                    sx={{top: "1rem", marginX: "1rem", position: "fixed", zIndex: (theme) => theme.zIndex.drawer + 1}}
+                    onClose={() => {setShowChatError(false)}}
+                    >
+                        <AlertTitle>Error</AlertTitle>
+                        New chat has <strong>not</strong> been added!
+                    </Alert>
+                </Fade>
+                <Fade in={showChatSuccess} timeout={500} addEndListener={() => {
+                    setTimeout(() => setShowChatSuccess(false), 3500)
+                }}>
+                    <Alert severity="success" 
+                    sx={{top: "1rem", marginX: "1rem", position: "fixed", zIndex: (theme) => theme.zIndex.drawer + 1}}
+                    onClose={() => {setShowChatSuccess(false)}}
+                    >
+                        <AlertTitle>Success</AlertTitle>
+                        New chat has been added!
+                    </Alert>
+                </Fade>
                 <AppBar
                     position="fixed"
                     sx={{
@@ -162,6 +177,7 @@ export default function HomeLayout({ children }) {
                         </IconButton>
 
                         <Typography
+                            noWrap
                             variant="h6"
                             sx={{
                             mx: 4,
@@ -264,7 +280,19 @@ export default function HomeLayout({ children }) {
                                 }}
                             />
                         </Box>
-                        {getChats(dummyData)}
+                        {getChats(chats)}
+                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "background.paper"  }}>
+                            <ListItem disablePadding onClick={handleAddNewToggle}>
+                                <ListItemButton>
+                                    <ListItemAvatar>
+                                        <Avatar sx={{color: "inherit"}}>
+                                            <Add/>
+                                        </Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary="Add New"/>
+                                </ListItemButton>
+                            </ListItem>
+                        </List>
                     </Drawer>
                     <Drawer
                         variant="permanent"
@@ -302,29 +330,42 @@ export default function HomeLayout({ children }) {
                                 }}
                             />
                         </Box>
-                        {getChats(dummyData)}
+                        {getChats(chats)}
+                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "background.paper"  }}>
+                            <ListItem disablePadding onClick={handleAddNewToggle}>
+                                <ListItemButton>
+                                    <ListItemAvatar>
+                                        <Avatar sx={{color: "inherit"}}>
+                                            <Add/>
+                                        </Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary="Add New"/>
+                                </ListItemButton>
+                            </ListItem>
+                        </List>
                     </Drawer>
-                    <Backdrop sx={{bgcolor: "secondary.main", zIndex: (theme) => theme.zIndex.drawer + 1}} open={addNew}>
-                        <Stack spacing={4} direction="column" justifyContent="center" alignItems="center" p="10%">
-                            <TextField 
+                    <Dialog open={addNew} onClose={handleAddNewToggle}>
+                        <DialogTitle>Add New Chat</DialogTitle>
+                        <DialogContent>
+                        <DialogContentText mb={1}>
+                            Enter an email to add that user!
+                        </DialogContentText>
+                        <TextField 
                                 required 
                                 id="newChat" 
                                 name="newChat" 
-                                label="Enter name..." 
+                                label="Email" 
                                 type="text" 
                                 className="stretchInput"
                                 onChange={e => setForm(e.target.value)}
                             />
-                            <Button variant="contained" size="large" onClick={handleAddNewToggle} color="warning">
-                                Cancel
-                            </Button>
-                            <Button variant="contained" size="large" startIcon={<Add/>} onClick={() => handleAddNew()} color="success">
-                                Add Chat
-                            </Button>
-                        </Stack>
-                    </Backdrop>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button variant="contained" size="large" color="warning" onClick={handleAddNewToggle}>Cancel</Button>
+                            <Button variant="contained" size="large" color="success" onClick={() => handleAddNew()} startIcon={<Add/>} disabled={!form.trim()}>Add</Button>
+                        </DialogActions>
+                    </Dialog>
                 </Box>
-
                 {children}
             </Box>
         </ViewContext.Provider>
