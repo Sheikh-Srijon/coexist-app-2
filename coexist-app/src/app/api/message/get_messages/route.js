@@ -11,11 +11,12 @@ export async function POST(request) {
     // get messages
     let result;
     try{
-        // queries the database and returns an array of documents
-        result = await msgs.find({
-            sender: body.sender,
-            recipient: body.recipient,
-        })
+        // queries the database and returns an array of documents, two way fetching enabled now
+        result = await msgs.find({$or:[
+            {sender: body.sender, recipient: body.recipient,},
+            {sender: body.recipient, recipient: body.sender,}
+        ]})
+
     } catch(e){
         console.log(e)
         result = false
@@ -29,6 +30,8 @@ export async function POST(request) {
         for await (const doc of result) {
             retrieved.push(doc);
         }
+
+        console.log(retrieved)
 
         // return the list of documents
         return new NextResponse(
