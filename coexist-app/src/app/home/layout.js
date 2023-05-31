@@ -105,21 +105,6 @@ export default function HomeLayout({ children }) {
             )
         })
 
-        if(search.length === 0){
-            chatList.push(
-                <ListItem disablePadding key={0} onClick={handleAddNewToggle}>
-                    <ListItemButton>
-                        <ListItemAvatar>
-                            <Avatar sx={{color: "inherit"}}>
-                                <Add/>
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary="Add New"/>
-                    </ListItemButton>
-                </ListItem>
-            )
-        }
-
         return (
             <List>
                 {chatList}
@@ -192,6 +177,7 @@ export default function HomeLayout({ children }) {
                         </IconButton>
 
                         <Typography
+                            noWrap
                             variant="h6"
                             sx={{
                             mx: 4,
@@ -295,6 +281,18 @@ export default function HomeLayout({ children }) {
                             />
                         </Box>
                         {getChats(chats)}
+                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "background.paper"  }}>
+                            <ListItem disablePadding onClick={handleAddNewToggle}>
+                                <ListItemButton>
+                                    <ListItemAvatar>
+                                        <Avatar sx={{color: "inherit"}}>
+                                            <Add/>
+                                        </Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary="Add New"/>
+                                </ListItemButton>
+                            </ListItem>
+                        </List>
                     </Drawer>
                     <Drawer
                         variant="permanent"
@@ -333,6 +331,18 @@ export default function HomeLayout({ children }) {
                             />
                         </Box>
                         {getChats(chats)}
+                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "background.paper"  }}>
+                            <ListItem disablePadding onClick={handleAddNewToggle}>
+                                <ListItemButton>
+                                    <ListItemAvatar>
+                                        <Avatar sx={{color: "inherit"}}>
+                                            <Add/>
+                                        </Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary="Add New"/>
+                                </ListItemButton>
+                            </ListItem>
+                        </List>
                     </Drawer>
                     <Dialog open={addNew} onClose={handleAddNewToggle}>
                         <DialogTitle>Add New Chat</DialogTitle>

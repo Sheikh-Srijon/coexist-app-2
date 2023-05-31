@@ -1,8 +1,8 @@
 "use client" 
 
 import { useState, useContext, useEffect } from "react" 
-import { Button, Grid, Paper, Typography, Box, TextField, MenuItem, Divider, CircularProgress, Alert, AlertTitle, Fade } from "@mui/material" 
-import { Send, Schedule } from "@mui/icons-material"
+import { Button, Typography, Box, TextField, Divider, CircularProgress, Alert, AlertTitle, Fade } from "@mui/material" 
+import { Send } from "@mui/icons-material"
 import { AuthContext } from "@/app/layout"
 import { ViewContext } from "../../layout"
 import { useRouter } from "next/navigation"
@@ -36,7 +36,9 @@ export default function Chat({ params }) {
     axios.post("/api/message/post_message", messageObj).then(res => {
       setMessageQueue((prevQueue) => [...prevQueue, messageObj]) 
       setMessage("") 
-      setShowSuccess(true)      
+      setShowSuccess(true) 
+      
+      document.getElementById(`${messageQueue.length - 1}Msg`).scrollIntoView(false)
     }).catch(err => {
         // TODO: add more thorough error checking
         console.log(`The follow error has occurred and as a result the message has not sent: ${err}`)
@@ -100,103 +102,85 @@ export default function Chat({ params }) {
         </Alert>
       </Fade>
       <Box sx={{
-        mt: {xs: "15vh", md: "10vh", xl: "5vh"},
-        ml: {xs: "0vh", sm: "25vw", md: "20vw"},
-        px: {xs: "10px", sm: "15px", md: "20px"}
-        }}>
-          <Grid container spacing={2} my="25px">
-          <Grid item xs={12}>
-              <Paper variant="outlined" sx={{ 
-                height: "60vh",
-                overflowY: "auto",
-                overscrollBehaviorY: "contain"
-              }}>
-              {/* Display fetched messages */}
-              {fetchedMessages.map((msg, index) => (
-                  <Box key={index} p={2}  sx={{
-                    textAlign: msg.sender === senderEmail ? 'right' : 'left',
-                    pl: msg.sender === senderEmail ? {xs: "15%", sm: "20%", md: "35%", lg: "40%"} : 1,
-                    pr: msg.sender === senderEmail ? 1 : {xs: "15%", sm: "20%", md: "35%", lg: "40%"},
-                  }} >
-                    <Typography onClick={() => {
-                      const ts = document.getElementById(`${index}ts`)
-                      ts.classList.toggle("hidden-element")
-                    }}>
-                        <b>{msg.sender}:</b> {msg.message}
-                    </Typography>
-                    <Typography variant="caption" color="textSecondary" id={`${index}ts`} className="hidden-element">
-                        {msg.timestamp}
-                    </Typography>
-                  </Box>
-              ))}
-              {messageQueue.length > 0 ? <Divider>Scheduled Messages</Divider> : ""}
-              {/* Display scheduled messages */}
-              {messageQueue.map((msg, index) => (
-                  <Box key={index} p={2} sx={{
-                    textAlign: "right",
-                    pl: {xs: "15%", sm: "20%", md: "35%", lg: "40%"},
-                    pr: 1
-                  }}>
+        ml: {xs: "0vw", sm: "25vw", md: "20vw"}
+      }}>
+          <Box sx={{
+            height: {xs: "calc(100vh - 48px)", sm: "calc(100vh - 64px)"},
+            mt: {xs: "48px", sm: "64px"},
+            display: "flex",
+            flexDirection: "column"
+          }}>
+            <Box sx={{ 
+                  overflowY: "auto",
+                  overscrollBehaviorY: "contain",
+                  flexGrow: 1
+                }}>
+                {/* Display fetched messages */}
+                {fetchedMessages.map((msg, index) => (
+                    <Box key={index} p={2}  sx={{
+                      textAlign: msg.sender === senderEmail ? 'right' : 'left',
+                      pl: msg.sender === senderEmail ? {xs: "15%", sm: "20%", md: "35%", lg: "40%"} : 1,
+                      pr: msg.sender === senderEmail ? 1 : {xs: "15%", sm: "20%", md: "35%", lg: "40%"},
+                    }} >
                       <Typography onClick={() => {
                         const ts = document.getElementById(`${index}ts`)
                         ts.classList.toggle("hidden-element")
                       }}>
-                        <b>Scheduled:</b> {msg.message}
+                          <b>{msg.sender}:</b> {msg.message}
                       </Typography>
-                      <Typography variant="caption" color="textSecondary" id={`${index}qTs`} className="hidden-element">
-                        {msg.timestamp}
+                      <Typography variant="caption" color="textSecondary" id={`${index}ts`} className="hidden-element">
+                          {msg.timestamp}
                       </Typography>
-                  </Box>
+                    </Box>
                 ))}
-              </Paper>
-          </Grid>
-          <Grid item xs={12}>
-              <Paper variant="outlined" sx={{ display: "flex", alignItems: "center", p: 1 }}>
-              <TextField
-                  fullWidth
-                  multiline
-                  maxRows={4}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  label="Type a message"
-                  sx={{m: 2}}
-              />
-              <Button
-                  className="wide-button"
-                  variant="contained"
-                  endIcon={<Send />}
-                  onClick={handleSendMessage}
-                  disabled={!message.trim()}
-                  sx={{m: 2}}
-              >
-                  Send
-              </Button>
-              </Paper>
-          </Grid>
-          <Grid item xs={12}>
-              <Paper variant="outlined" sx={{ display: "flex", alignItems: "center", p: 1 }}>
-              <TextField
-                  select
-                  fullWidth
-                  disabled
-                  label="Schedule time"
-                  sx={{m: 2}}
-              >
-                  <MenuItem value="">Select a time</MenuItem>
-              </TextField>
-              <Button
-                  className="wide-button"
-                  variant="contained"
-                  endIcon={<Schedule />}
-                  onClick={handleScheduleMessageDelivery}
-                  disabled
-                  sx={{m: 2}}
-              >
-                  Schedule Message Delivery
-              </Button>
-              </Paper>
-          </Grid>
-          </Grid>
+                {messageQueue.length > 0 ? <Divider>Scheduled Messages</Divider> : ""}
+                {/* Display scheduled messages */}
+                {messageQueue.map((msg, index) => (
+                    <Box id={`${index}Msg`} key={index} p={2} sx={{
+                      textAlign: "right",
+                      pl: {xs: "15%", sm: "20%", md: "35%", lg: "40%"},
+                      pr: 1
+                    }}>
+                        <Typography onClick={() => {
+                          const ts = document.getElementById(`${index}qTs`)
+                          ts.classList.toggle("hidden-element")
+                        }}>
+                          <b>Scheduled:</b> {msg.message}
+                        </Typography>
+                        <Typography variant="caption" color="textSecondary" id={`${index}qTs`} className="hidden-element">
+                          {msg.timestamp}
+                        </Typography>
+                    </Box>
+                  ))}
+            </Box>
+            <Box sx={{ 
+              display: "flex", 
+              alignItems: "center", 
+              p: 1, 
+              width: {xs: "100vw", sm: "75vw", md: "80vw"},
+              bgcolor: "background.paper",
+              justifySelf: "end"
+            }}>
+                <TextField
+                    fullWidth
+                    multiline
+                    maxRows={4}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    label="Type a message"
+                    sx={{m: 1}}
+                />
+                <Button
+                    variant="contained"
+                    endIcon={<Send />}
+                    onClick={handleSendMessage}
+                    disabled={!message.trim()}
+                    sx={{m: 1, minWidth: "8rem", height: "3.65rem"}}
+                >
+                    Send
+                </Button>
+            </Box>
+          </Box>
       </Box>
     </Box>
   ) 
