@@ -18,9 +18,10 @@ export default function Chat({ params }) {
   const [fetchedMessages, setFetchMessages] = useState([])
   const [showError, setShowError] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+
   // determine who is the and recipient
   const senderEmail = auth.auth.email
-  const recipientEmail = params.user // TODO: update with real recipient email
+  const recipientEmail = params.user.replace("%40", "@") // TODO: update with real recipient email
 
   const handleSendMessage = () => {
     // message for database information
