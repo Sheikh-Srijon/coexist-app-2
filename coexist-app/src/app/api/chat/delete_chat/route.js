@@ -1,5 +1,3 @@
-
-
 import clientPromise from '@/utils/mongodb'
 import { NextResponse } from 'next/server'
 import ObjectId from '@/utils/objectId'; // Add this import statement
