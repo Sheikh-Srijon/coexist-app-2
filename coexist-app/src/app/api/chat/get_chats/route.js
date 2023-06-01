@@ -13,6 +13,7 @@ export async function POST(request) {
     try{
         // queries the database and returns an array of documents
         result = await chats.find({members: body.email})
+        console.log("Results testing, ",  result);
     } catch(e){
         console.log(e)
         result = false
@@ -34,6 +35,7 @@ export async function POST(request) {
 
             chats.push(emails);
         }
+        console.log(JSON.stringify(chats))
 
         // return the list of chats
         return new NextResponse(
