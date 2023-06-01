@@ -42,6 +42,7 @@ export default function HomeLayout({ children }) {
 
     const handleAddNewToggle = () => {
         setAddNew(!addNew)
+        setForm("")
     }
 
     const handleOpenUserMenu = (event) => {
@@ -180,7 +181,7 @@ export default function HomeLayout({ children }) {
                             noWrap
                             variant="h6"
                             sx={{
-                            mx: 4,
+                            mx: {xs: 2, sm: 4},
                             display: "flex",
                             flexGrow: 1,
                             justifyContent: {xs: "center", sm: "start"},
@@ -193,9 +194,9 @@ export default function HomeLayout({ children }) {
                             {view.currentView}
                         </Typography>
 
-                        <Box sx={{justifySelf: "end"}}>
+                        <Box sx={{justifySelf: "end", p: 0, mx: {xs: 4, sm: 3}}}>
                             <Tooltip title="Open your profile">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, mx: 3 }}>
+                            <IconButton onClick={handleOpenUserMenu}>
                                 <Avatar sx={{bgcolor: "secondary.light", color: "inherit"}}>
                                     {auth.auth.firstName[0]}
                                 </Avatar>
@@ -281,7 +282,7 @@ export default function HomeLayout({ children }) {
                             />
                         </Box>
                         {getChats(chats)}
-                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "background.paper"  }}>
+                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "primary.dark", backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15))"}}>
                             <ListItem disablePadding onClick={handleAddNewToggle}>
                                 <ListItemButton>
                                     <ListItemAvatar>
@@ -331,7 +332,7 @@ export default function HomeLayout({ children }) {
                             />
                         </Box>
                         {getChats(chats)}
-                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "background.paper"  }}>
+                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "primary.dark" }}>
                             <ListItem disablePadding onClick={handleAddNewToggle}>
                                 <ListItemButton>
                                     <ListItemAvatar>
