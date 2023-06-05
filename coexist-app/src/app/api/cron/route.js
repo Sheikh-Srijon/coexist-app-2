@@ -9,7 +9,7 @@ export async function GET(request) {
   const chats = db.collection("chats");
 
   // get messages\
-  let messages = null;
+  let messages;
   //retrieve all messages
   try {
     messages = await message_collection
@@ -17,37 +17,41 @@ export async function GET(request) {
       .toArray();
   } catch (e) {
     console.log(e);
-    return new NextResponse(undefined, { status: 500 }) // Internal server error
-
+    return new NextResponse(undefined, { status: 500 }); // Internal server error
   }
   // send all messages to their respective chats
   try {
-    for (let message of messages) {
-      const chat = await chats.findOne({ _id: new ObjectId(message.chat_id) });
+    // Create an array to store the batch operations
+    const bulkOperations = [];
 
-      if (chat) {
-        // Add message to the corresponding chat document
-        chat.messages.push(message);
-        await chats.updateOne(
-          { _id: new ObjectId(message.chat_id) },
-          { $set: { messages: chat.messages } }
-        );
-      }
-    }
-    // chats updated so delete messages
-    await message_collection.deleteMany({});
-    return new NextResponse(
-      JSON.stringify("messages added to respective chats"),
-      {
-        status: 201,
-        headers: {
-          "content-type": "application/json",
+    for (let message of messages) {
+      const chatId = new ObjectId(message.chat_id);
+
+      // Add the update operation to the bulk operations array
+      bulkOperations.push({
+        updateOne: {
+          filter: { _id: chatId },
+          update: { $push: { messages: message } },
         },
-      }
-    );
+      });
+      //delete messages
+      await message_collection.deleteMany({});
+      return new NextResponse(
+        JSON.stringify("messages added to respective chats"),
+        {
+          status: 201,
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      );
+    }
+
+    // Perform the batch update operation
+    console.log("performing bulk write");
+    await chats.bulkWrite(bulkOperations);
   } catch (e) {
     console.log("error in adding message to chat", e);
-    return new NextResponse(undefined, { status: 500 }) // Internal server error
-
+    return new NextResponse(undefined, { status: 500 }); // Internal server error
   }
 }
