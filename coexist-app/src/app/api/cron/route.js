@@ -48,7 +48,6 @@ export async function GET(request) {
     }
 
     // Perform the batch update operation
-    console.log("performing bulk write");
     await chats.bulkWrite(bulkOperations);
   } catch (e) {
     console.log("error in adding message to chat", e);
