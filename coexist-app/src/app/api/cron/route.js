@@ -36,19 +36,19 @@ export async function GET(request) {
       });
       //delete messages
       await message_collection.deleteMany({});
-      return new NextResponse(
-        JSON.stringify("messages added to respective chats"),
-        {
-          status: 201,
-          headers: {
-            "content-type": "application/json",
-          },
-        }
-      );
     }
 
     // Perform the batch update operation
     await chats.bulkWrite(bulkOperations);
+    return new NextResponse(
+      JSON.stringify("messages added to respective chats"),
+      {
+        status: 201,
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    );
   } catch (e) {
     console.log("error in adding message to chat", e);
     return new NextResponse(undefined, { status: 500 }); // Internal server error
