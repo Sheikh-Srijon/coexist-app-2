@@ -82,24 +82,22 @@ export default function HomeLayout({ children }) {
         }
         
         chatList = wantedChats.map(chat => {
-            // chat is currently a list of emails that correspond to the users involved in a chat; for now this is just two people (so only one name is returned)
-            const words = chat.join(", ") // TODO: replace this so it picks first and last name and change the code below accordingly
-            let initials = words[0][0]
-
-            if(words.length > 1){
-                initials = words[0][0] + words[1][0]
-            }
-
+            // note that we use chat[0] for now because each chat is just one other user but could be more in the future
             return (
-            <Link href={`/home/chat/${chat}`} key={chat._id}>
+            <Link href={{pathname: `/home/chat/${chat[0].email}`, query: {
+                first: chat[0].first,
+                last: chat[0].last,
+                email: chat[0].email,
+                chat_id: chat[0].chat_id
+            }}} key={chat[0].email}>
                 <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemAvatar>
                             <Avatar sx={{color: "inherit"}}>
-                                {initials}
+                                {`${chat[0].first[0]}${chat[0].last[0]}`}
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary={chat}/>
+                        <ListItemText primary={`${chat[0].first} ${chat[0].last[0]}`}/>
                     </ListItemButton>
                 </ListItem>
             </Link>
@@ -124,6 +122,7 @@ export default function HomeLayout({ children }) {
 
         axios.post("/api/chat/get_chats", auth.auth).then(res => {
             setChats(res.data)
+            console.log(res.data)
         }).catch(err => {
             // TODO: add more thorough error checking
             console.log(`The follow error has occurred and as a result the chats are not fetched: ${err}`)
@@ -250,7 +249,7 @@ export default function HomeLayout({ children }) {
                         }}
                         sx={{
                             display: { xs: 'block', sm: 'none' },
-                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark", overscrollBehaviorY: "contain" },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark", overscrollBehaviorY: "contain", overflowX: "hidden" },
                         }}
                     >
                         <Typography
@@ -299,7 +298,7 @@ export default function HomeLayout({ children }) {
                         variant="permanent"
                         sx={{
                             display: { xs: 'none', sm: 'block' },
-                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark", overscrollBehaviorY: "contain" },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark", overscrollBehaviorY: "contain", overflowX: "hidden" },
                         }}
                         open
                     >
