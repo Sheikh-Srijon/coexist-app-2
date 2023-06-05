@@ -7,20 +7,20 @@ export async function POST(request) {
   const db = dbClient.db("coexist_data");
   const message_collection = db.collection("messages");
   const chats = db.collection("chats");
-  const users = db.collection("users");
   const body = await request.json();
 
-  // get messages
+  // get messages\
+  let messages = null;
+  //retrieve all messages
   try {
-    //Todo: retrieve all messages
-    const messages = await message_collection
+    messages = await message_collection
       .find({ chat_id: { $exists: true } })
       .toArray();
-    // //Todo: send all messages to their respective chats
-    // messages.forEach(async (message) => {
-    //   //assign to respective chat
-
-    // });
+  } catch (e) {
+    console.log(e);
+  }
+  // send all messages to their respective chats
+  try {
     for (let message of messages) {
       const chat = await chats.findOne({ _id: new ObjectId(message.chat_id) });
 
@@ -31,18 +31,20 @@ export async function POST(request) {
           { _id: new ObjectId(message.chat_id) },
           { $set: { messages: chat.messages } }
         );
-
-        // updatedMessages.push(message);
       }
-      console.log('foundchat')
+      console.log("foundchat");
     }
-    return new NextResponse(JSON.stringify(messages), {
-      status: 201,
-      headers: {
-        "content-type": "application/json",
-      },
-    });
-    // Todo: configure the appropriate cron job
+    // chats updated so delete messages
+    await message_collection.deleteMany({});
+    return new NextResponse(
+      JSON.stringify("messages added to respective chats"),
+      {
+        status: 201,
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    );
   } catch (e) {
     console.log(e);
   }
