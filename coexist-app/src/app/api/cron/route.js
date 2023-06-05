@@ -2,12 +2,11 @@ import clientPromise from "@/utils/mongodb";
 import ObjectId from "@/utils/objectId"; // Add this import statement
 import { NextResponse } from "next/server";
 
-export async function POST(request) {
+export async function GET(request) {
   const dbClient = await clientPromise;
   const db = dbClient.db("coexist_data");
   const message_collection = db.collection("messages");
   const chats = db.collection("chats");
-  const body = await request.json();
 
   // get messages\
   let messages = null;
@@ -18,6 +17,8 @@ export async function POST(request) {
       .toArray();
   } catch (e) {
     console.log(e);
+    return new NextResponse(undefined, { status: 500 }) // Internal server error
+
   }
   // send all messages to their respective chats
   try {
@@ -32,7 +33,6 @@ export async function POST(request) {
           { $set: { messages: chat.messages } }
         );
       }
-      console.log("foundchat");
     }
     // chats updated so delete messages
     await message_collection.deleteMany({});
@@ -46,6 +46,8 @@ export async function POST(request) {
       }
     );
   } catch (e) {
-    console.log(e);
+    console.log("error in adding message to chat", e);
+    return new NextResponse(undefined, { status: 500 }) // Internal server error
+
   }
 }
