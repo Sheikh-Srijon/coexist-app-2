@@ -89,7 +89,7 @@ export default function HomeLayout({ children }) {
                 last: chat[0].last,
                 email: chat[0].email,
                 chat_id: chat[0].chat_id
-            }}} key={chat[0].email}>
+            }}} key={chat[0].chat_id}>
                 <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemAvatar>
@@ -122,7 +122,6 @@ export default function HomeLayout({ children }) {
 
         axios.post("/api/chat/get_chats", auth.auth).then(res => {
             setChats(res.data)
-            console.log(res.data)
         }).catch(err => {
             // TODO: add more thorough error checking
             console.log(`The follow error has occurred and as a result the chats are not fetched: ${err}`)

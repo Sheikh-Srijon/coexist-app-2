@@ -6,7 +6,6 @@ export async function POST(request) {
     const dbClient = await clientPromise
     const db = dbClient.db("coexist_data")
     const chats = db.collection("chats")
-    const users = db.collection("users")
 
     const body = await request.json()
 
@@ -22,6 +21,7 @@ export async function POST(request) {
 
     // do some parsing of the result to get proper fields
     if(result !== false){
+        const users = db.collection("users")
         const chats = [];
 
         // retrieves data as a list
@@ -39,7 +39,7 @@ export async function POST(request) {
                     }
 
                     // adding chat_id here is fine for now since there is only one participant but might want to create another object in chats later
-                    participants.push({chat_id: new ObjectId(doc.chat_id), email: em, first: user.firstName, last: user.lastName})
+                    participants.push({chat_id: new ObjectId(doc._id), email: em, first: user.firstName, last: user.lastName})
                 }
             }
 

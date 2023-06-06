@@ -1,41 +1,41 @@
 import clientPromise from '@/utils/mongodb'
 import { NextResponse } from 'next/server'
+import ObjectId from '@/utils/objectId'
 
 export async function POST(request) {
     const dbClient = await clientPromise
     const db = dbClient.db("coexist_data")
-    const msgs = db.collection("messages")
+    const chats = db.collection("chats")
 
     const body = await request.json()
 
     // get messages
     let result;
     try{
-        // queries the database and returns an array of documents, two way fetching enabled now
-        result = await msgs.find({$or:[
-            {sender: body.sender, recipient: body.recipient,},
-            {sender: body.recipient, recipient: body.sender,}
-        ]})
-
+        // queries the database and returns the matching chat document's sent messages and queued messages
+        result = await chats.findOne({_id: new ObjectId(body.chat_id)}, {projection: {messages: 1, queued_messages: 1}})
     } catch(e){
         console.log(e)
         result = false
     }
 
-    // do some parsing of the result to get proper fields
     if(result !== false){
-        const retrieved = [];
-
-        // retrieves data as a list
-        for await (const doc of result) {
-            retrieved.push(doc);
+        let messages = {
+            messages: [],
+            queued_messages: []
         }
 
-        console.log(retrieved)
+        if (result !== null){
+            messages.messages = messages.messages.concat(result.messages || [])
+            messages.queued_messages = messages.queued_messages.concat(result.queued_messages || [])
+            
+            // Note that this can be achieved with a more complex query to reduce read time/amount but I am not sure how to do that
+            messages.queued_messages = messages.queued_messages.filter(qmes => qmes.sender === body.sender)
+        }
 
-        // return the list of documents
+        // return the lists of sent messages and queued messages
         return new NextResponse(
-            JSON.stringify(retrieved), {
+            JSON.stringify(messages), {
                 status: 201,
                 headers: {
                     "content-type": "application/json"

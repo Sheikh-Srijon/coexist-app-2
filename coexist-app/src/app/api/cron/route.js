@@ -27,15 +27,13 @@ export async function GET(request) {
     for (let message of messages) {
       const chatId = new ObjectId(message.chat_id);
 
-      // Add the update operation to the bulk operations array
+      // update operation to chats list: update/push to messages and delete/pull from queue!
       bulkOperations.push({
         updateOne: {
           filter: { _id: chatId },
-          update: { $push: { messages: message } },
+          update: { $push: { messages: message }, $pull: { queued_messages: message } },
         },
       });
-      //delete messages
-      await message_collection.deleteMany({});
     }
 
     // Perform the batch update operation
