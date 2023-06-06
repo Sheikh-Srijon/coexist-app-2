@@ -26,7 +26,7 @@ export default function Chat({ searchParams }) {
   const handleSendMessage = () => {
     // message for database information
     const send = new Date()
-    send.setUTCHours(20, 0, 0, 0)
+    send.setUTCHours(1, 0, 0, 0)
     
     const messageObj = {
       sender: senderEmail,
@@ -65,12 +65,13 @@ export default function Chat({ searchParams }) {
     // create message data request to MongoDB endpoint
     const messageData = {
       sender: senderEmail,
-      recipient: recipientEmail,
+      chat_id: searchParams.chat_id
     }
 
     // grab the documents/messages that match the messageData req query
     axios.post("/api/message/get_messages", messageData).then(res => {
-        setFetchMessages(res.data)
+        setFetchMessages(res.data.messages)
+        setMessageQueue(res.data.queued_messages)
     }).catch(err => {
         // TODO: add more thorough error checking
         console.log(`The follow error has occurred and as a result the messages are not fetched: ${err}`)

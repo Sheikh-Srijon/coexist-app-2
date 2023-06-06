@@ -1,16 +1,17 @@
 import clientPromise from "@/utils/mongodb";
 import { NextResponse } from "next/server";
+import ObjectId from '@/utils/objectId';
 
 export async function POST(request) {
   const dbClient = await clientPromise;
   const db = dbClient.db("coexist_data");
-  const msgs = db.collection("messages");
+  const chats = db.collection("chats");
 
   const body = await request.json();
 
   let result;
   try {
-    //Todo: Error handling-  sender, recipient must be emails, message - string, valid chat_id
+    // TODO: Error handling-  sender, recipient must be emails, message - string, valid chat_id
 
     // Validate the message body
     const { sender, recipient, message, timestamp, send_time, chat_id } = body;
@@ -20,12 +21,12 @@ export async function POST(request) {
     }
 
     const message_obj = {
+      _id: new ObjectId(),
       sender: sender,
       recipient: recipient,
       message: message,
       timestamp: timestamp,
       send_time: send_time,
-      chat_id: chat_id,
     };
 
     // Validate sender and recipient as emails
@@ -34,16 +35,11 @@ export async function POST(request) {
         return new NextResponse(JSON.stringify("invalid email sent"), { status: 400 });
     }
 
-    // TODO: result is never used but should be for error checking
-    result = await msgs.insertOne(message_obj);
-    return new NextResponse(JSON.stringify(message_obj), {
-      status: 201,
-      headers: {
-        "content-type": "application/json",
-      },
-    });
+    // TODO: result should be used for error checking
+    result = await chats.updateOne({_id: new ObjectId(chat_id)}, {$push: {queued_messages: message_obj}})
+
+    return new NextResponse(undefined, { status: 201 });
   } catch (e) {
-    result = false;
     return new NextResponse(undefined, { status: 409 });
   }
 }

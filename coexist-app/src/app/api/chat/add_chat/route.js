@@ -1,5 +1,6 @@
 import clientPromise from '@/utils/mongodb'
 import { NextResponse } from 'next/server'
+import ObjectId from '@/utils/objectId'
  
 export async function POST(request) {
     const dbClient = await clientPromise
@@ -9,28 +10,37 @@ export async function POST(request) {
     const body = await request.json()
 
     // check that other user exists
-    let newChat;
+    let otherUser
     try{
-        newChat = await users.findOne({email: body.newEmail})
+        otherUser = await users.findOne({email: body.newEmail})
     } catch(e){
-        newChat = false
+        otherUser = false
     }
 
-    if(newChat !== false && newChat !== null){
+    if(otherUser !== false && otherUser !== null){
+        let newChat
         const chats = db.collection("chats")
 
         try{
             newChat = await chats.insertOne({
                 members: [body.newEmail, body.user.email],
-                messages: []
+                messages: [],
+                queued_messages: []
             })
         } catch(e){
             newChat = false
         }
 
         if(newChat !== false){
+            const res = {
+                chat_id: new ObjectId(newChat._id),
+                first: otherUser.firstName,
+                last: otherUser.lastName,
+                email: body.newEmail
+            }
+
             return new NextResponse(
-                JSON.stringify([body.newEmail]), {
+                JSON.stringify([res]), {
                     status: 201,
                     headers: {
                         "content-type": "application/json"

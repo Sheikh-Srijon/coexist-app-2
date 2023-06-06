@@ -14,7 +14,7 @@ export async function POST(request) {
 
     let result;
     try{
-        result = await users.findOne(user, {projection: {_id: 0, firstName: 1, lastName: 1, email: 1, password:1, phone: 1}})
+        result = await users.findOne(user, {projection: {firstName: 1, lastName: 1, email: 1, password:1, phone: 1}})
     } catch(e){
         result = false
     }
