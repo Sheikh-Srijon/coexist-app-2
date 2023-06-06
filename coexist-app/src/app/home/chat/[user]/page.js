@@ -23,7 +23,7 @@ export default function Chat({ searchParams }) {
   const senderEmail = auth.auth.email
   const recipientEmail = searchParams.email
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (e) => {
     // message for database information
     const send = new Date()
     send.setUTCHours(1, 0, 0, 0)
@@ -49,6 +49,8 @@ export default function Chat({ searchParams }) {
         console.log(err)
         setShowError(true)
     })
+
+    e.preventDefault()
   } 
 
   const handleScheduleMessageDelivery = () => {
@@ -171,7 +173,7 @@ export default function Chat({ searchParams }) {
                     </Box>
                   ))}
             </Box>
-            <Box sx={{ 
+            <Box component="form" autoComplete="off" noValidate onSubmit={e => handleSendMessage(e)} sx={{ 
               display: "flex", 
               alignItems: "center", 
               p: 1, 
@@ -190,8 +192,8 @@ export default function Chat({ searchParams }) {
                 />
                 <Button
                     variant="contained"
+                    type="submit" 
                     endIcon={<Send />}
-                    onClick={handleSendMessage}
                     disabled={!message.trim()}
                     sx={{m: 1, minWidth: "8rem", height: "3.65rem"}}
                 >

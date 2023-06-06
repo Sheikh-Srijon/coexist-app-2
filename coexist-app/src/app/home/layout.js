@@ -7,7 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu"
 import "./home.css"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { AuthContext } from "../layout"
+import { AuthContext, ThemeContext } from "../layout"
 import fuzzysort from "fuzzysort"
 import axios from "axios"
 
@@ -26,6 +26,7 @@ function useView(){
 export default function HomeLayout({ children }) {
     const router = useRouter()
     const auth = useContext(AuthContext)
+    const currentTheme = useContext(ThemeContext)
     const view = useView()
     const [mobileOpen, setMobileOpen] = useState(false)
     const [addNew, setAddNew] = useState(false)
@@ -53,7 +54,7 @@ export default function HomeLayout({ children }) {
         setAnchorElUser(null);
     };
 
-    function handleAddNew(){
+    function handleAddNew(e){
         const data = {
             user: auth.auth,
             newEmail: form
@@ -73,8 +74,8 @@ export default function HomeLayout({ children }) {
             setShowChatError(true)
         }
         
-
         setAddNew(false)
+        e.preventDefault()
     }
 
     function getChats(data){
@@ -252,7 +253,7 @@ export default function HomeLayout({ children }) {
                         }}
                         sx={{
                             display: { xs: 'block', sm: 'none' },
-                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark", overscrollBehaviorY: "contain", overflowX: "hidden" },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark", overscrollBehaviorY: "contain", overflowX: "hidden", backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15))" },
                         }}
                     >
                         <Typography
@@ -301,7 +302,7 @@ export default function HomeLayout({ children }) {
                         variant="permanent"
                         sx={{
                             display: { xs: 'none', sm: 'block' },
-                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark", overscrollBehaviorY: "contain", overflowX: "hidden" },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark", overscrollBehaviorY: "contain", overflowX: "hidden", backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))" },
                         }}
                         open
                     >
@@ -334,7 +335,7 @@ export default function HomeLayout({ children }) {
                             />
                         </Box>
                         {getChats(chats)}
-                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "primary.dark" }}>
+                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "primary.dark", backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))" }}>
                             <ListItem disablePadding onClick={handleAddNewToggle}>
                                 <ListItemButton>
                                     <ListItemAvatar>
@@ -347,7 +348,7 @@ export default function HomeLayout({ children }) {
                             </ListItem>
                         </List>
                     </Drawer>
-                    <Dialog open={addNew} onClose={handleAddNewToggle}>
+                    <Dialog component="form" autoComplete="off" noValidate open={addNew} onClose={handleAddNewToggle} onSubmit={e => handleAddNew(e)}>
                         <DialogTitle>Add New Chat</DialogTitle>
                         <DialogContent>
                         <DialogContentText mb={1}>
@@ -359,13 +360,16 @@ export default function HomeLayout({ children }) {
                                 name="newChat" 
                                 label="Email" 
                                 type="text" 
-                                className="stretchInput"
                                 onChange={e => setForm(e.target.value)}
+                                sx={{
+                                    width: "65vw",
+                                    maxWidth: "30rem"
+                                }}
                             />
                         </DialogContent>
                         <DialogActions>
                             <Button variant="contained" size="large" color="warning" onClick={handleAddNewToggle}>Cancel</Button>
-                            <Button variant="contained" size="large" color="success" onClick={() => handleAddNew()} startIcon={<Add/>} disabled={!form.trim()}>Add</Button>
+                            <Button variant="contained" size="large" color="success" type="submit" startIcon={<Add/>} disabled={!form.trim()}>Add</Button>
                         </DialogActions>
                     </Dialog>
                 </Box>
