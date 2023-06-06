@@ -6,6 +6,7 @@ export async function POST(request) {
     const dbClient = await clientPromise
     const db = dbClient.db("coexist_data")
     const users = db.collection("users")
+    const chats = db.collection("chats")
 
     const body = await request.json()
 
@@ -17,7 +18,15 @@ export async function POST(request) {
         otherUser = false
     }
 
-    if(otherUser !== false && otherUser !== null){
+    // check if the chat already exists
+    let chat
+    try{
+        chat = await chats.findOne({members: {$all: [body.newEmail, body.user.email], $size: 2}})
+    } catch(e){
+        return new NextResponse(undefined, {status: 500})
+    }
+
+    if(otherUser !== false && otherUser !== null && chat === null && body.newEmail !== body.user.email){
         let newChat
         const chats = db.collection("chats")
 
@@ -25,7 +34,8 @@ export async function POST(request) {
             newChat = await chats.insertOne({
                 members: [body.newEmail, body.user.email],
                 messages: [],
-                queued_messages: []
+                queued_messages: [],
+                last_updated: Date.now()
             })
         } catch(e){
             newChat = false

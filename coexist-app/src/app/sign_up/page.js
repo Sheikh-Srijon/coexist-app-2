@@ -157,8 +157,17 @@ export default function SignUp() {
         axios.post("/api/account/register", form).then(res => {
             auth.logIn(res.data)
         }).catch(err => {
+            const errorMsgConflict = document.querySelector("#signupErrorAlertConflict")
             const errorMsg = document.querySelector("#signupErrorAlert")
-            errorMsg.classList.remove("alertHidden")
+
+            if (err.response.status === 409){
+                errorMsgConflict.classList.remove("alertHidden")
+                errorMsg.classList.add("alertHidden")
+            }
+            else{
+                errorMsgConflict.classList.add("alertHidden")
+                errorMsg.classList.remove("alertHidden")
+            }
 
             console.log(`The follow error has occurred and as a result you are NOT registered: ${err}`)
         })
@@ -192,6 +201,10 @@ export default function SignUp() {
                     <Box className="fieldError alertHidden" id="signupErrorAlert" sx={{color: "error.contrastText", bgcolor: "error.main"}}>
                         <Error/>
                         <span>We&rsquo;re sorry, an internal error has occurred. Please try again later.</span>
+                    </Box>
+                    <Box className="fieldError alertHidden" id="signupErrorAlertConflict" sx={{color: "error.contrastText", bgcolor: "error.main"}}>
+                        <Error/>
+                        <span>An account with that email already exists.</span>
                     </Box>
                 </Grid>
             </Grid>

@@ -15,6 +15,18 @@ export async function POST(request) {
         phone: body.phone
     }
 
+    // check if the email is already in use
+    let checkUser
+    try{
+        checkUser = await users.findOne({email: body.email})
+    } catch(e){
+        return new NextResponse(undefined, {status: 500})
+    }
+
+    if (checkUser !== null){
+        return new NextResponse(undefined, {status: 409})
+    }
+
     let result;
     try{
         result = await users.insertOne(user)

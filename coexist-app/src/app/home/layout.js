@@ -59,15 +59,20 @@ export default function HomeLayout({ children }) {
             newEmail: form
         }
 
-        axios.post("/api/chat/add_chat", data).then(res => {
-            setChats((prevChats) => [...prevChats, res.data])
-            setShowChatSuccess(true)
-            setForm("")
-        }).catch(err => {
-            // TODO: add more thorough error checking
-            console.log(`The follow error has occurred and as a result the chats are not fetched: ${err}`)
+        if (auth.auth.email !== form){
+            axios.post("/api/chat/add_chat", data).then(res => {
+                setChats((prevChats) => [res.data, ...prevChats])
+                setShowChatSuccess(true)
+                setForm("")
+            }).catch(err => {
+                console.log(`The follow error has occurred and as a result the chats are not fetched: ${err}`)
+                setShowChatError(true)
+            })
+        }
+        else{
             setShowChatError(true)
-        })
+        }
+        
 
         setAddNew(false)
     }
@@ -77,7 +82,7 @@ export default function HomeLayout({ children }) {
         let wantedChats = data
 
         if(search.length > 0){
-            wantedChats = fuzzysort.go(search, wantedChats, {key: "name"})
+            wantedChats = fuzzysort.go(search, wantedChats, {keys: ["0.first", "0.last"]})
             wantedChats = wantedChats.map(chat => chat.obj)
         }
         

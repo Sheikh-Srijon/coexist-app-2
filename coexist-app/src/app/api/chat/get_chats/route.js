@@ -13,7 +13,7 @@ export async function POST(request) {
     let result;
     try{
         // queries the database and returns an array of documents
-        result = await chats.find({members: body.email})
+        result = await chats.find({members: body.email}).sort({last_updated: -1})
     } catch(e){
         console.log(e)
         result = false
