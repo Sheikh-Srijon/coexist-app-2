@@ -35,7 +35,7 @@ export async function GET(request) {
       bulkOperations.push({
           updateOne: {
             filter: { _id: chatId },
-            update: { $push: { messages: queued }, $pull: { queued_messages: queued } },
+            update: { $push: { messages: queued, last_updated: Date.now() }, $pull: { queued_messages: queued } },
           },
         });
     }
