@@ -1,10 +1,12 @@
 import clientPromise from '@/utils/mongodb'
 import { NextResponse } from 'next/server'
+import ObjectId from '@/utils/objectId'
 
 export async function POST(request) {
     const dbClient = await clientPromise
     const db = dbClient.db("coexist_data")
     const chats = db.collection("chats")
+    const users = db.collection("users")
 
     const body = await request.json()
 
@@ -24,15 +26,24 @@ export async function POST(request) {
 
         // retrieves data as a list
         for await (const doc of result) {
-            const emails = []
+            const participants = []
 
-            for(const email of doc.members){
-                if(email !== body.email){
-                    emails.push(email)
+            for(const em of doc.members){
+                if(em !== body.email){
+                    let user
+
+                    try{
+                        user = await users.findOne({email: em})
+                    } catch(e){
+                        return new NextResponse(undefined, {status: 500})
+                    }
+
+                    // adding chat_id here is fine for now since there is only one participant but might want to create another object in chats later
+                    participants.push({chat_id: new ObjectId(doc.chat_id), email: em, first: user.firstName, last: user.lastName})
                 }
             }
 
-            chats.push(emails);
+            chats.push(participants);
         }
 
         // return the list of chats

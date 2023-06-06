@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation"
 import "./user.css"
 import axios from "axios"
 
-export default function Chat({ params }) {
+export default function Chat({ searchParams }) {
   const router = useRouter()
   const auth = useContext(AuthContext)
   const view = useContext(ViewContext)
@@ -21,16 +21,20 @@ export default function Chat({ params }) {
 
   // determine who is the and recipient
   const senderEmail = auth.auth.email
-  const recipientEmail = params.user.replace("%40", "@") // TODO: update with real recipient email
+  const recipientEmail = searchParams.email
 
   const handleSendMessage = () => {
     // message for database information
+    const send = new Date()
+    send.setUTCHours(20, 0, 0, 0)
+    
     const messageObj = {
       sender: senderEmail,
       recipient: recipientEmail,
       message,
       timestamp: new Date().toLocaleTimeString(),
-      send_time: "no time" // TODO: come back to fix this for scheduling
+      send_time: send.toLocaleTimeString(), // this is for 1pm PST since we can currently only do 1 cron job a day
+      chat_id: searchParams.chat_id,
     } 
 
     // post to the database and update UI
@@ -56,7 +60,7 @@ export default function Chat({ params }) {
       router.push("/")
     }
     // update view to display name of the current chat recipient
-    view.changeView(params.user) // TODO: replace this with dynamic user name
+    view.changeView(`${searchParams.first} ${searchParams.last}`)
 
     // create message data request to MongoDB endpoint
     const messageData = {
@@ -71,6 +75,7 @@ export default function Chat({ params }) {
         // TODO: add more thorough error checking
         console.log(`The follow error has occurred and as a result the messages are not fetched: ${err}`)
     })
+    // TODO: should do the same thing above but for queued messages
   }, [])
 
   return (

@@ -1,5 +1,5 @@
 import clientPromise from "@/utils/mongodb";
-import ObjectId from "@/utils/objectId"; // Add this import statement
+import ObjectId from "@/utils/objectId";
 import { NextResponse } from "next/server";
 
 export async function GET(request) {
@@ -8,9 +8,9 @@ export async function GET(request) {
   const message_collection = db.collection("messages");
   const chats = db.collection("chats");
 
-  // get messages\
+  // get messages
   let messages;
-  //retrieve all messages
+  // retrieve all messages
   try {
     messages = await message_collection
       .find({ chat_id: { $exists: true } })
