@@ -43,6 +43,7 @@ export default function Chat({ searchParams }) {
       setMessage("") 
       setShowSuccess(true) 
       
+      document.getElementById("emptyChatAlert").classList.add("hidden-element")
       document.getElementById(`${messageQueue.length - 1}Msg`).scrollIntoView(false)
     }).catch(err => {
         console.log(err)
@@ -71,6 +72,10 @@ export default function Chat({ searchParams }) {
     axios.post("/api/message/get_messages", messageData).then(res => {
         setFetchMessages(res.data.messages)
         setMessageQueue(res.data.queued_messages)
+
+        if (res.data.messages.length + res.data.queued_messages.length === 0){
+          document.getElementById("emptyChatAlert").classList.remove("hidden-element")
+        }
     }).catch(err => {
         console.log(err)
     })
@@ -119,6 +124,15 @@ export default function Chat({ searchParams }) {
                   overscrollBehaviorY: "contain",
                   flexGrow: 1
                 }}>
+                {/* Display a message if no messages exist in this chat */}
+                <Typography className="hidden-element" id="emptyChatAlert" sx={{
+                  opacity: 0.6,
+                  fontSize: "1.4rem",
+                  textAlign: "center",
+                  mt: {xs: "56px", sm: "72px"}
+                }}>
+                  It is empty in here... trying adding a message below!
+                </Typography>
                 {/* Display fetched messages */}
                 {fetchedMessages.map((msg, index) => (
                     <Box key={index} p={2}  sx={{
@@ -137,7 +151,7 @@ export default function Chat({ searchParams }) {
                       </Typography>
                     </Box>
                 ))}
-                {messageQueue.length > 0 ? <Divider>Scheduled Messages</Divider> : ""}
+                {messageQueue.length > 0 ? <Divider sx={{mt: "10px"}}>Scheduled Messages</Divider> : ""}
                 {/* Display scheduled messages */}
                 {messageQueue.map((msg, index) => (
                     <Box id={`${index}Msg`} key={index} p={2} sx={{
