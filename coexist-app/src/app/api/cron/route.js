@@ -5,16 +5,17 @@ import { NextResponse } from "next/server";
 export async function GET(request) {
   const dbClient = await clientPromise;
   const db = dbClient.db("coexist_data");
-  const message_collection = db.collection("messages");
   const chats = db.collection("chats");
 
   // get messages
   let messages;
-  // retrieve all messages
+
+  // retrieve all queued messages using chats document
   try {
-    messages = await message_collection
-      .find({ chat_id: { $exists: true } })
+    chat_docs = await chats
+      .find({ queued_messages: { $exists: true, $not: {$size: 0} } }, {queued_messages: 1})
       .toArray();
+
   } catch (e) {
     console.log(e);
     return new NextResponse(undefined, { status: 500 }); // Internal server error
@@ -24,16 +25,19 @@ export async function GET(request) {
     // Create an array to store the batch operations
     const bulkOperations = [];
 
-    for (let message of messages) {
-      const chatId = new ObjectId(message.chat_id);
+    for (let doc of chat_docs) {
+      const chatId = new ObjectId(doc._id);
 
-      // update operation to chats list: update/push to messages and delete/pull from queue!
+      // get the queued messages
+      let queued = doc.queued_messages
+
+      // clear the queue and push those messages to the sent messages
       bulkOperations.push({
-        updateOne: {
-          filter: { _id: chatId },
-          update: { $push: { messages: message }, $pull: { queued_messages: message } },
-        },
-      });
+          updateOne: {
+            filter: { _id: chatId },
+            update: { $push: { messages: queued }, $pull: { queued_messages: queued } },
+          },
+        });
     }
 
     // Perform the batch update operation
