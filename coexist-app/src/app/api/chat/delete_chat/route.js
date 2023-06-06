@@ -12,7 +12,6 @@ export async function POST(request) {
   try {
     // Delete the chat based on the email
     const deletionResult = await chats.deleteOne({ _id:  new ObjectId(body.chat_id)})
-    console.log("deletion result test", deletionResult);
 
     if (deletionResult.deletedCount > 0) {
       return new NextResponse(
@@ -20,10 +19,10 @@ export async function POST(request) {
         { status: 200, headers: { "Content-Type": "application/json" } }
       )
     } else {
-      return new NextResponse(undefined, { status: 404 }) // Chat not found
+      return new NextResponse("Chat not found", { status: 404 }) 
     }
   } catch (e) {
-    console.log(e)
-    return new NextResponse(undefined, { status: 500 }) // Internal server error
+    console.log(`ERROR DELETING CHAT\n${e}`)
+    return new NextResponse("Internal server error", { status: 500 }) 
   }
 }

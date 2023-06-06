@@ -45,8 +45,7 @@ export default function Chat({ searchParams }) {
       
       document.getElementById(`${messageQueue.length - 1}Msg`).scrollIntoView(false)
     }).catch(err => {
-        // TODO: add more thorough error checking
-        console.log(`The follow error has occurred and as a result the message has not sent: ${err}`)
+        console.log(err)
         setShowError(true)
     })
   } 
@@ -73,10 +72,8 @@ export default function Chat({ searchParams }) {
         setFetchMessages(res.data.messages)
         setMessageQueue(res.data.queued_messages)
     }).catch(err => {
-        // TODO: add more thorough error checking
-        console.log(`The follow error has occurred and as a result the messages are not fetched: ${err}`)
+        console.log(err)
     })
-    // TODO: should do the same thing above but for queued messages
   }, [])
 
   return (

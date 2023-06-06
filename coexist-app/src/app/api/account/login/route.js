@@ -13,9 +13,11 @@ export async function POST(request) {
     }
 
     let result;
+    
     try{
         result = await users.findOne(user, {projection: {firstName: 1, lastName: 1, email: 1, password:1, phone: 1}})
     } catch(e){
+        console.log(`ERROR CHECKING USER\n${e}`)
         result = false
     }
 
@@ -30,6 +32,6 @@ export async function POST(request) {
         )
     }
     else{
-        return new NextResponse(undefined, {status: 404})
+        return new NextResponse("Incorrect credentials", {status: 404})
     }
 }

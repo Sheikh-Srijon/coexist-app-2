@@ -7,18 +7,14 @@ export async function GET(request) {
   const db = dbClient.db("coexist_data");
   const chats = db.collection("chats");
 
-  // get messages
-  let messages;
-
   // retrieve all queued messages using chats document
   try {
     chat_docs = await chats
       .find({ queued_messages: { $exists: true, $not: {$size: 0} } }, {queued_messages: 1})
       .toArray();
-
   } catch (e) {
-    console.log(e);
-    return new NextResponse(undefined, { status: 500 }); // Internal server error
+    console.log(`ERROR GETTING QUEUED MESSAGES\n${e}`)
+    return new NextResponse("Internal server error", { status: 500 });
   }
   // send all messages to their respective chats
   try {
@@ -44,6 +40,7 @@ export async function GET(request) {
 
     // Perform the batch update operation
     await chats.bulkWrite(bulkOperations);
+    
     return new NextResponse(
       JSON.stringify("messages added to respective chats"),
       {
@@ -54,7 +51,7 @@ export async function GET(request) {
       }
     );
   } catch (e) {
-    console.log("error in adding message to chat", e);
-    return new NextResponse(undefined, { status: 500 }); // Internal server error
+    console.log(`ERROR PUSHING MESSAGES\n${e}`)
+    return new NextResponse("Internal server error", { status: 500 });
   }
 }

@@ -33,6 +33,7 @@ export default function Login() {
       axios.post("/api/account/login", {email: email, password: password}).then(res => {
         auth.logIn(res.data)
       }).catch(err => {
+        console.log(err)
         errorMsg.classList.remove("alertHidden")
       })
     }

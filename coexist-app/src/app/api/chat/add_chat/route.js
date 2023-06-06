@@ -15,6 +15,7 @@ export async function POST(request) {
     try{
         otherUser = await users.findOne({email: body.newEmail})
     } catch(e){
+        console.log(`ERROR CHECKING OTHER USER\n${e}`)
         otherUser = false
     }
 
@@ -23,7 +24,8 @@ export async function POST(request) {
     try{
         chat = await chats.findOne({members: {$all: [body.newEmail, body.user.email], $size: 2}})
     } catch(e){
-        return new NextResponse(undefined, {status: 500})
+        console.log(`ERROR CHECKING CHAT\n${e}`)
+        return new NextResponse("Internal server error", {status: 500})
     }
 
     if(otherUser !== false && otherUser !== null && chat === null && body.newEmail !== body.user.email){
@@ -38,6 +40,7 @@ export async function POST(request) {
                 last_updated: Date.now()
             })
         } catch(e){
+            console.log(`ERROR ADDING CHAT\n${e}`)
             newChat = false
         }
 
@@ -59,10 +62,10 @@ export async function POST(request) {
             )
         }
         else{
-            return new NextResponse(undefined, {status: 409})
+            return new NextResponse("Internal server error", {status: 500})
         }
     }
     else{
-        return new NextResponse(undefined, {status: 409})
+        return new NextResponse("Chat already exists", {status: 409})
     }
 }

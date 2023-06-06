@@ -9,13 +9,13 @@ export async function POST(request) {
 
     const body = await request.json()
 
-    // get messages
     let result;
+
     try{
         // queries the database and returns the matching chat document's sent messages and queued messages
         result = await chats.findOne({_id: new ObjectId(body.chat_id)}, {projection: {messages: 1, queued_messages: 1}})
     } catch(e){
-        console.log(e)
+        console.log(`ERROR GETTING MESSAGES\n${e}`)
         result = false
     }
 
@@ -44,6 +44,6 @@ export async function POST(request) {
         )
     }
     else{
-        return new NextResponse(undefined, {status: 409})
+        return new NextResponse("Internal server error", {status: 500})
     }
 }

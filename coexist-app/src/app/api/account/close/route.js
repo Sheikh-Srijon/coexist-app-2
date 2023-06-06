@@ -16,9 +16,11 @@ export async function POST(request) {
     }
 
     let result;
+
     try{
         result = await users.deleteOne(user)
     } catch(e){
+        console.log(`ERROR DELETING USER\n${e}`)
         result = false
     }
 
@@ -26,6 +28,6 @@ export async function POST(request) {
         return new NextResponse(undefined, {status: 204})
     }
     else{
-        return new NextResponse(undefined, {status: 409})
+        return new NextResponse("Account already closed", {status: 409})
     }
 }

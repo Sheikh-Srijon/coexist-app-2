@@ -169,7 +169,7 @@ export default function SignUp() {
                 errorMsg.classList.remove("alertHidden")
             }
 
-            console.log(`The follow error has occurred and as a result you are NOT registered: ${err}`)
+            console.log(err)
         })
       }
   

@@ -17,14 +17,16 @@ export async function POST(request) {
 
     // check if the email is already in use
     let checkUser
+
     try{
         checkUser = await users.findOne({email: body.email})
     } catch(e){
-        return new NextResponse(undefined, {status: 500})
+        console.log(`ERROR CHECKING USER\n${e}`)
+        return new NextResponse("Internal server error", {status: 500})
     }
 
     if (checkUser !== null){
-        return new NextResponse(undefined, {status: 409})
+        return new NextResponse("Email already exists", {status: 409})
     }
 
     let result;
@@ -45,6 +47,6 @@ export async function POST(request) {
         )
     }
     else{
-        return new NextResponse(undefined, {status: 409})
+        return new NextResponse("Internal server error", {status: 500})
     }
 }

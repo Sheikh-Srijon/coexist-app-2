@@ -9,13 +9,13 @@ export async function POST(request) {
 
     const body = await request.json()
 
-    // get messages
     let result;
+
     try{
         // queries the database and returns an array of documents
         result = await chats.find({members: body.email}).sort({last_updated: -1})
     } catch(e){
-        console.log(e)
+        console.log(`ERROR GETTING CHATS\n${e}`)
         result = false
     }
 
@@ -57,6 +57,6 @@ export async function POST(request) {
         )
     }
     else{
-        return new NextResponse(undefined, {status: 409})
+        return new NextResponse("Internal server error", {status: 500})
     }
 }

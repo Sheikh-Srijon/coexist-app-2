@@ -65,7 +65,7 @@ export default function HomeLayout({ children }) {
                 setShowChatSuccess(true)
                 setForm("")
             }).catch(err => {
-                console.log(`The follow error has occurred and as a result the chats are not fetched: ${err}`)
+                console.log(err)
                 setShowChatError(true)
             })
         }
@@ -128,8 +128,7 @@ export default function HomeLayout({ children }) {
         axios.post("/api/chat/get_chats", auth.auth).then(res => {
             setChats(res.data)
         }).catch(err => {
-            // TODO: add more thorough error checking
-            console.log(`The follow error has occurred and as a result the chats are not fetched: ${err}`)
+            console.log(err)
         })
     }, [])
 
