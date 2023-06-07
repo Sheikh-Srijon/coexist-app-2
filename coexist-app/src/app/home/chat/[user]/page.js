@@ -15,7 +15,7 @@ export default function Chat({ searchParams }) {
   const view = useContext(ViewContext)
   const [message, setMessage] = useState("") 
   const [messageQueue, setMessageQueue] = useState([])
-  const [fetchedMessages, setFetchMessages] = useState([])
+  const [fetchedMessages, setFetchedMessages] = useState([])
   const [showError, setShowError] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
 
@@ -44,18 +44,14 @@ export default function Chat({ searchParams }) {
       setShowSuccess(true) 
       
       document.getElementById("emptyChatAlert").classList.add("hidden-element")
-      document.getElementById(`${messageQueue.length - 1}Msg`).scrollIntoView(false)
+      document.getElementById(`${messageQueue.length - 1}qMsg`).scrollIntoView(false)
     }).catch(err => {
         console.log(err)
         setShowError(true)
     })
 
     e.preventDefault()
-  } 
-
-  const handleScheduleMessageDelivery = () => {
-    // TODO: No real functionality for scheduling messages
-  } 
+  }
 
   useEffect(() => {
     if(auth.auth === null){
@@ -72,11 +68,18 @@ export default function Chat({ searchParams }) {
 
     // grab the documents/messages that match the messageData req query
     axios.post("/api/message/get_messages", messageData).then(res => {
-        setFetchMessages(res.data.messages)
+        setFetchedMessages(res.data.messages)
         setMessageQueue(res.data.queued_messages)
 
         if (res.data.messages.length + res.data.queued_messages.length === 0){
           document.getElementById("emptyChatAlert").classList.remove("hidden-element")
+        }
+        
+        if (res.data.queued_messages.length !== 0){
+          document.getElementById(`${messageQueue.length - 1}qMsg`).scrollIntoView(false)
+        }
+        else if (res.data.messages.length !== 0){
+          document.getElementById(`${fetchedMessages.length - 1}Msg`).scrollIntoView(false)
         }
     }).catch(err => {
         console.log(err)
@@ -137,7 +140,7 @@ export default function Chat({ searchParams }) {
                 </Typography>
                 {/* Display fetched messages */}
                 {fetchedMessages.map((msg, index) => (
-                    <Box key={index} p={2}  sx={{
+                    <Box id={`${index}Msg`} key={index} p={2}  sx={{
                       textAlign: msg.sender === senderEmail ? 'right' : 'left',
                       pl: msg.sender === senderEmail ? {xs: "15%", sm: "20%", md: "35%", lg: "40%"} : 1,
                       pr: msg.sender === senderEmail ? 1 : {xs: "15%", sm: "20%", md: "35%", lg: "40%"},
@@ -156,7 +159,7 @@ export default function Chat({ searchParams }) {
                 {messageQueue.length > 0 ? <Divider sx={{mt: "10px"}}>Scheduled Messages</Divider> : ""}
                 {/* Display scheduled messages */}
                 {messageQueue.map((msg, index) => (
-                    <Box id={`${index}Msg`} key={index} p={2} sx={{
+                    <Box id={`${index}qMsg`} key={index} p={2} sx={{
                       textAlign: "right",
                       pl: {xs: "15%", sm: "20%", md: "35%", lg: "40%"},
                       pr: 1
