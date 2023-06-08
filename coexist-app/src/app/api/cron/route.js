@@ -9,7 +9,7 @@ export async function GET(request) {
 
   // retrieve all queued messages using chats document
   try {
-    chat_docs = await chats
+    let chat_docs = await chats
       .find({ queued_messages: { $exists: true, $not: {$size: 0} } }, {queued_messages: 1})
       .toArray();
   } catch (e) {
