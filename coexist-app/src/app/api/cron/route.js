@@ -28,18 +28,13 @@ export async function GET(request) {
 
       // get the queued messages
       let queued = doc.queued_messages
-      let sent_msgs = doc.messages
-
-      // push to new sent messages field
-      for (let message in queued) {
-        sent_msgs.push(message)
-      }
 
       // clear the queue and push those messages to the sent messages
       bulkOperations.push({
           updateOne: {
             filter: { _id: chatId },
-            update: { $set: {last_updated: Date.now(), messages: sent_msgs, queued_messages: [] } },
+            update: { $set: { last_updated: Date.now(), queued_messages: [] },
+                      $push: { messages: { $each: queued } } },
           },
         });
     }
