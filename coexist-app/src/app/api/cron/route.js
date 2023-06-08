@@ -6,16 +6,18 @@ export async function GET(request) {
   const dbClient = await clientPromise;
   const db = dbClient.db("coexist_data");
   const chats = db.collection("chats");
+  let chat_docs = {}
 
   // retrieve all queued messages using chats document
   try {
-    let chat_docs = await chats
+    chat_docs = await chats
       .find({ queued_messages: { $exists: true, $not: {$size: 0} } }, {queued_messages: 1})
       .toArray();
   } catch (e) {
     console.log(`ERROR GETTING QUEUED MESSAGES\n${e}`)
     return new NextResponse("Internal server error", { status: 500 });
   }
+
   // send all messages to their respective chats
   try {
     // Create an array to store the batch operations
@@ -26,14 +28,18 @@ export async function GET(request) {
 
       // get the queued messages
       let queued = doc.queued_messages
+      let sent_msgs = doc.messages
+
+      // push to new sent messages field
+      for (let message in queued) {
+        sent_msgs.push(message)
+      }
 
       // clear the queue and push those messages to the sent messages
       bulkOperations.push({
           updateOne: {
             filter: { _id: chatId },
-            update: { $push: { messages: queued}, 
-                      $pull: { queued_messages: queued }, 
-                      $set: {last_updated: Date.now() } },
+            update: { $set: {last_updated: Date.now(), messages: sent_msgs, queued_messages: [] } },
           },
         });
     }
