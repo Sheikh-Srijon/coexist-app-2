@@ -6,12 +6,14 @@ export async function GET(request) {
   const dbClient = await clientPromise;
   const db = dbClient.db("coexist_data");
   const chats = db.collection("chats");
+
+  // create new variable for chat documents
   let chat_docs = {}
 
   // retrieve all queued messages using chats document
   try {
     chat_docs = await chats
-      .find({ queued_messages: { $exists: true, $not: {$size: 0} } }, {queued_messages: 1})
+      .find({ queued_messages: { $exists: true } }, {queued_messages: 1})
       .toArray();
   } catch (e) {
     console.log(`ERROR GETTING QUEUED MESSAGES\n${e}`)
