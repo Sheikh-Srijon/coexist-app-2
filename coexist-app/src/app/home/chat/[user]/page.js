@@ -41,13 +41,19 @@ export default function Chat({ searchParams }) {
     axios.post("/api/message/post_message", messageObj).then(res => {
       setMessageQueue((prevQueue) => [...prevQueue, messageObj]) 
       setMessage("") 
-      setShowSuccess(true) 
+      setShowSuccess(true)
+      setShowError(false)
       
       document.getElementById("emptyChatAlert").classList.add("hidden-element")
-      document.getElementById(`${messageQueue.length - 1}qMsg`).scrollIntoView(false)
+
+      const lastMessage = document.getElementById(`${messageQueue.length - 1}qMsg`)
+      if(lastMessage !== null){
+        lastMessage.scrollIntoView(false)
+      }
     }).catch(err => {
         console.log(err)
         setShowError(true)
+        setShowSuccess(false)
     })
 
     e.preventDefault()
@@ -93,8 +99,8 @@ export default function Chat({ searchParams }) {
     </Box> 
     :
     <Box>
-      <Fade in={showError} timeout={500} addEndListener={() => {
-        setTimeout(() => setShowError(false), 3500)
+      <Fade in={showError} timeout={300} addEndListener={() => {
+        setTimeout(() => setShowError(false), 3000)
       }}>
         <Alert severity="error" 
           sx={{top: "1rem", marginX: "1rem", position: "fixed", zIndex: (theme) => theme.zIndex.drawer + 1}}
@@ -104,8 +110,8 @@ export default function Chat({ searchParams }) {
           Message has <strong>not</strong> been added to your scheduled send!
         </Alert>
       </Fade>
-      <Fade in={showSuccess} timeout={500} addEndListener={() => {
-        setTimeout(() => setShowSuccess(false), 3500)
+      <Fade in={showSuccess} timeout={300} addEndListener={() => {
+        setTimeout(() => setShowSuccess(false), 3000)
       }}>
         <Alert severity="success" 
           sx={{top: "1rem", marginX: "1rem", position: "fixed", zIndex: (theme) => theme.zIndex.drawer + 1}}

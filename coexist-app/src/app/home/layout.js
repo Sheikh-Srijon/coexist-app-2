@@ -64,10 +64,12 @@ export default function HomeLayout({ children }) {
             axios.post("/api/chat/add_chat", data).then(res => {
                 setChats((prevChats) => [res.data, ...prevChats])
                 setShowChatSuccess(true)
+                setShowChatError(false)
                 setForm("")
             }).catch(err => {
                 console.log(err)
                 setShowChatError(true)
+                setShowChatSuccess(false)
             })
         }
         else{
@@ -141,8 +143,8 @@ export default function HomeLayout({ children }) {
         :
         <ViewContext.Provider value={view}>
             <Box>
-                <Fade in={showChatError} timeout={500} addEndListener={() => {
-                    setTimeout(() => setShowChatError(false), 3500)
+                <Fade in={showChatError} timeout={300} addEndListener={() => {
+                    setTimeout(() => setShowChatError(false), 3000)
                 }}>
                     <Alert severity="error" 
                     sx={{top: "1rem", marginX: "1rem", position: "fixed", zIndex: (theme) => theme.zIndex.drawer + 1}}
@@ -152,8 +154,8 @@ export default function HomeLayout({ children }) {
                         New chat has <strong>not</strong> been added!
                     </Alert>
                 </Fade>
-                <Fade in={showChatSuccess} timeout={500} addEndListener={() => {
-                    setTimeout(() => setShowChatSuccess(false), 3500)
+                <Fade in={showChatSuccess} timeout={300} addEndListener={() => {
+                    setTimeout(() => setShowChatSuccess(false), 3000)
                 }}>
                     <Alert severity="success" 
                     sx={{top: "1rem", marginX: "1rem", position: "fixed", zIndex: (theme) => theme.zIndex.drawer + 1}}
@@ -184,14 +186,15 @@ export default function HomeLayout({ children }) {
                             noWrap
                             variant="h6"
                             sx={{
-                            mx: {xs: 2, sm: 4},
+                            mx: {xs: 0, sm: 4},
                             display: "flex",
                             flexGrow: 1,
                             justifyContent: {xs: "center", sm: "start"},
                             fontWeight: 700,
-                            letterSpacing: "0.1rem",
+                            letterSpacing: {xs: "0rem", sm: "0.1rem"},
                             color: 'inherit',
                             textDecoration: 'none',
+                            fontSize: {xs: "1rem", sm: "1.25rem"}
                             }}
                         >
                             {view.currentView}
@@ -253,7 +256,8 @@ export default function HomeLayout({ children }) {
                         }}
                         sx={{
                             display: { xs: 'block', sm: 'none' },
-                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark", overscrollBehaviorY: "contain", overflowX: "hidden", backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15))" },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: "65vw", bgcolor: "primary.dark", overscrollBehaviorY: "contain", overflowX: "hidden", 
+                            backgroundImage: currentTheme === "lightTheme" ? "linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5))" : "linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2))" },
                         }}
                     >
                         <Typography
@@ -285,7 +289,8 @@ export default function HomeLayout({ children }) {
                             />
                         </Box>
                         {getChats(chats)}
-                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "primary.dark", backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15))"}}>
+                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "primary.dark", 
+                            backgroundImage: currentTheme === "lightTheme" ? "linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5))" : "linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2))"}}>
                             <ListItem disablePadding onClick={handleAddNewToggle}>
                                 <ListItemButton>
                                     <ListItemAvatar>
@@ -302,7 +307,8 @@ export default function HomeLayout({ children }) {
                         variant="permanent"
                         sx={{
                             display: { xs: 'none', sm: 'block' },
-                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark", overscrollBehaviorY: "contain", overflowX: "hidden", backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))" },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: {sm: "25vw", md: "20vw"}, bgcolor: "primary.dark", overscrollBehaviorY: "contain", overflowX: "hidden", 
+                                backgroundImage: currentTheme === "lightTheme" ? "linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.35))" : "linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))" },
                         }}
                         open
                     >
@@ -335,7 +341,8 @@ export default function HomeLayout({ children }) {
                             />
                         </Box>
                         {getChats(chats)}
-                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "primary.dark", backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))" }}>
+                        <List sx={{bottom: 0, position: "absolute", width: "100%", bgcolor: "primary.dark", 
+                            backgroundImage: currentTheme === "lightTheme" ? "linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.35))" : "linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))" }}>
                             <ListItem disablePadding onClick={handleAddNewToggle}>
                                 <ListItemButton>
                                     <ListItemAvatar>
