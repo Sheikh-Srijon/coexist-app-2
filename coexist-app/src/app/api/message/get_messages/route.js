@@ -2,6 +2,8 @@ import clientPromise from '@/utils/mongodb'
 import { NextResponse } from 'next/server'
 import ObjectId from '@/utils/objectId'
 
+export const revalidate = 60
+
 export async function POST(request) {
     const dbClient = await clientPromise
     const db = dbClient.db("coexist_data")
